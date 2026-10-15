@@ -33,7 +33,7 @@
 \newcommand{\ci}[3]{\ensuremath{#1}\,[\ensuremath{#2},\allowbreak\,\ensuremath{#3}]}
 \newcommand{\ys}{yes-score}
 
-\title{The Injected Word Arrives but Is Not Read:\\ Reports of Injected Thoughts in Qwen3 Run Through a Content-Free Yes Direction}
+\title{The Injected Word Reaches the Answer but Not the Report:\\ Injected-Thought Reports in Qwen3 Run Mainly Through a Content-Free Yes Direction}
 
 \author{
   Sam Ramdan\\
@@ -52,17 +52,17 @@ Language models told that a thought may have been injected into their activation
 
 Injected words raise the first-token \ys{} at every size, by $+3.5$ to $+6.9$ logits, but random directions of the same added size raise it too. When the model is forced to name the thought, at most 3 words reach the top 10, and no free-text answer at any size affirms an injected thought.
 
-A single direction $H$ carries the report. $H$ is estimated from random disturbances only, never from words. Holding it at its clean value removes the injection's effect. The share of word trials scoring above the clean prompt falls from 0.97 to 0.00, 1.00 to 0.47, 1.00 to 0.00 and 0.93 to 0.55 across the four sizes. Holding a random direction, or a separately estimated yes direction, does not do this. Added on its own, $H$ raises the \ys{} on plainly false questions about as much as on the introspection question.
+A single direction $H$ carries most of the report. $H$ is estimated from random disturbances only, never from words. Holding it at its clean value removes the injection's average effect at 1.7B, 4B and 8B, and about 85\% of it at 14B. The share of word trials scoring above the clean prompt falls from 0.97 to 0.00 at 1.7B and from 1.00 to 0.00 at 8B. It falls only to 0.47 at 4B (from 1.00) and 0.55 at 14B (from 0.93), so smaller routes besides $H$ cannot be excluded at those sizes. Holding a random direction, or a separately estimated yes direction, does not do this. Added on its own, $H$ raises the \ys{} on plainly false questions about as much as on the introspection question.
 
-The injected word's identity nonetheless reaches the position where the answer forms. In the last layer, a 40-way decoder identifies the word from that position with 0.75--1.00 accuracy, whether or not $H$ is held. In 1.7B and 8B, holding $H$ in the last quarter of layers alone erases the report.
+The injected word's identity nonetheless reaches the position where the answer forms. In the last layer, a 40-way decoder identifies the word from that position with 0.75--1.00 accuracy, whether or not $H$ is held. This shows that the information is present there. It does not show that no downstream computation uses it; what we observe is that the reports almost never identify the word: no free-text answer names it, and forced naming puts it in the top 10 for at most 3 of 40 words. In 1.7B and 8B, holding $H$ in the last quarter of layers alone erases the report.
 
-A word placed directly in the model's workspace is never reported. In Qwen3-8B it moves the \ys{} more than random directions do when they are matched on added size, by \ci{+10.8}{+10.5}{+11.1}, or on output change, by \ci{+9.2}{+7.5}{+10.0}. It moves the \ys{} less when they are matched on the change in the final residual, by \ci{-5.6}{-6.1}{-5.0}, and it never changes an answer.
+A word placed directly in the model's workspace is almost never reported: one of 160 free-text answers across the four models names it (Qwen3-4B, where 4 of 40 answers affirm a thought). In Qwen3-8B it moves the \ys{} more than random directions do when they are matched on added size, by \ci{+10.8}{+10.5}{+11.1}, or on output change, by \ci{+9.2}{+7.5}{+10.0}. It moves the \ys{} less when they are matched on the change in the final residual, by \ci{-5.6}{-6.1}{-5.0}, and it never changes an answer.
 
 A 256-token chain of thought lowers detection AUROC at every size (14B: 0.93 to 0.82). It fills 90--97\% of the traces with capability disclaimers and does not improve naming.
 
 An exploratory study of deliberate gibberish finds a goal direction specific to the instruction. The direction sustains the behaviour but does not suppress meaning.
 
-In these models, reports of injected thoughts read a content-free yes direction at a late bottleneck, not the injected content.
+In these models, reports of injected thoughts run mainly through a content-free yes direction at a late bottleneck. The injected content is present at that point, but the reports almost never identify it.
 \end{abstract}
 
 \section{Introduction}
@@ -78,9 +78,9 @@ This paper answers both questions for four sizes of one model family, Qwen3 \cit
 \paragraph{Contributions.} All claims are about Qwen3-1.7B, 4B, 8B and 14B with the prompts below, and say nothing about whether anything is experienced.
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Detection without content, replicated in Qwen3 (Section~\ref{sec:detect}).} Injected words are detected at every size, but random directions of the same added size are also detected. Naming stays at the floor, and no free-text answer affirms an injected thought. This extends \citet{lederman2026content} to smaller Qwen3 models.
-  \item \textbf{One content-free direction carries the report, and it is a yes direction (Section~\ref{sec:H}).} A direction $H$ estimated from random disturbances alone is necessary for the report at all four sizes. Added alone, it pushes plainly false questions toward ``yes''. This gives a mechanism for the yes-bias that \citet{godet2025confusion} and \citet{hahami2026disturbance} reported behaviourally in Llama.
-  \item \textbf{A late reporting bottleneck (Section~\ref{sec:stages}).} The injected word leaves the question tokens within a few layers, and its identity is linearly decodable at the answer position through the last layer. The report ignores it, and holding $H$ in late layers alone is enough to erase the report.
-  \item \textbf{Workspace content is not reported (Section~\ref{sec:workspace}).} A word placed in the J-space at the answer position is never reported in free text. Its effect on the \ys{} relative to random directions changes sign with the matching criterion. We report all three criteria.
+  \item \textbf{One content-free direction carries most of the report, and it is a yes direction (Section~\ref{sec:H}).} A direction $H$ estimated from random disturbances alone is needed for the report. Holding it removes the report at 1.7B and 8B and the average effect at 4B; at 14B it removes most of the effect. At 4B and 14B about half of the word trials stay above clean, so $H$ need not be the only route there. Added alone, $H$ pushes plainly false questions toward ``yes''. This gives a mechanism for the yes-bias that \citet{godet2025confusion} and \citet{hahami2026disturbance} reported behaviourally in Llama.
+  \item \textbf{A late reporting bottleneck (Section~\ref{sec:stages}).} The injected word leaves the question tokens within a few layers, and its identity is linearly decodable at the answer position through the last layer. Free-text reports never name it, and holding $H$ in late layers alone is enough to erase the report at 1.7B and 8B.
+  \item \textbf{Workspace content is almost never reported (Section~\ref{sec:workspace}).} A word placed in the J-space at the answer position is named in one of 160 free-text answers (at 4B). Its effect on the \ys{} relative to random directions changes sign with the matching criterion. We report all three criteria.
   \item \textbf{Chain of thought adds denial, not access (Section~\ref{sec:thinking}).} Thinking lowers detection at every size and fills traces with capability disclaimers without improving naming.
   \item \textbf{A goal direction for deliberate gibberish (Section~\ref{sec:gib}, exploratory).} Identical tokens under different instructions isolate a direction that sustains intentionally meaningless output without suppressing meaning.
 \end{enumerate}
@@ -202,11 +202,11 @@ Sun colder than ice: starts ``Yes'', $H$ (clean) & 40/40 (14/40) & 0/40 (0/40) &
 \end{tabular}}
 \end{table}
 
-\section{One content-free direction carries the report}\label{sec:H}
+\section{One content-free direction carries most of the report}\label{sec:H}
 
 \paragraph{The direction.} $H$ is estimated from what random disturbances on the question do to the answer position, and no words are involved. Its three independent estimates agree closely (median cosine 0.986--0.989 across edit layers). On held-out trials, the projection of the answer position's shift onto $H$ tracks the \ys{} ($r$ = 0.67, 0.79, 0.77 and 0.44, averaged over layers). $H$ is nearly orthogonal to the lens image of the Yes$-$No readout (max $|\cos|$ = 0.14--0.16), so it is not simply the output direction.
 
-\paragraph{Necessary.} Holding $H$ at its clean value on the assistant turn removes the injection's effect at every size (Figure~\ref{fig:holds}a; Table~\ref{tab:main}). The change in \ys{} goes from \ci{+3.54}{+3.01}{+4.09} to \ci{-2.85}{-3.13}{-2.56} at 1.7B and from \ci{+6.93}{+6.44}{+7.40} to \ci{-0.44}{-0.87}{-0.02} at 4B. It goes from \ci{+6.89}{+6.61}{+7.12} to \ci{-4.14}{-4.32}{-3.97} at 8B, and from \ci{+6.36}{+5.16}{+7.52} to \ci{+0.99}{-0.05}{+2.03} at 14B. The share of word trials above clean falls to \ci{0.00}{0.00}{0.09}, \ci{0.47}{0.33}{0.63}, \ci{0.00}{0.00}{0.09} and \ci{0.55}{0.40}{0.69}; a share of 0.5 or below means the injection no longer registers. Holding $H$ at the answer position alone does the same.
+\paragraph{Holding it removes most or all of the report.} Holding $H$ at its clean value on the assistant turn removes most or all of the injection's effect at every size (Figure~\ref{fig:holds}a; Table~\ref{tab:main}). The change in \ys{} goes from \ci{+3.54}{+3.01}{+4.09} to \ci{-2.85}{-3.13}{-2.56} at 1.7B and from \ci{+6.93}{+6.44}{+7.40} to \ci{-0.44}{-0.87}{-0.02} at 4B. It goes from \ci{+6.89}{+6.61}{+7.12} to \ci{-4.14}{-4.32}{-3.97} at 8B, and from \ci{+6.36}{+5.16}{+7.52} to \ci{+0.99}{-0.05}{+2.03} at 14B. The share of word trials above clean falls to \ci{0.00}{0.00}{0.09}, \ci{0.47}{0.33}{0.63}, \ci{0.00}{0.00}{0.09} and \ci{0.55}{0.40}{0.69}; a share of 0.5 or below means the injection no longer registers. Holding $H$ at the answer position alone does the same. The removal is clean at 1.7B and 8B, where every word trial falls below clean. At 4B the average effect is gone, but the trials scatter around the clean value (0.47 above). At 14B a residual of about one logit remains, and its interval includes zero (0.55 above). So $H$ is the main route at every size, but at 4B and 14B these data cannot exclude smaller routes that bypass it.
 
 \paragraph{Specific.} Holding a random direction leaves the report intact (0.95--1.00 above clean). So does holding $Y$, the yes direction estimated on plain factual questions (0.88--1.00). $Y$ is nearly unrelated to $H$ (median cosine 0.16--0.27). Removing $Y$'s component from $H$ leaves 96--99\% of $H$'s norm. Holding that remainder, $H-Y$, still erases the report at 1.7B and 8B (0.01 and 0.00 above clean). It erases about half at 4B (0.55) and less at 14B, where 0.80 of word trials stay above clean against 0.55 with $H$ itself.
 
@@ -217,7 +217,7 @@ Sun colder than ice: starts ``Yes'', $H$ (clean) & 40/40 (14/40) & 0/40 (0/40) &
 \paragraph{Relation to the yes-bias critiques.} \citet{godet2025confusion} and \citet{hahami2026disturbance} showed in Llama models that steering raises ``yes'' on factual-no controls as much as on the introspection question. Our results agree for Qwen3 and add three things:
 \begin{itemize}
   \item the push toward yes runs through one direction that can be estimated without any word;
-  \item holding that direction is enough to remove the report;
+  \item holding that direction removes the report at 1.7B and 8B and most of it at 4B and 14B;
   \item the direction is not the model's Yes/No output direction and not the yes direction of plain factual questions.
 \end{itemize}
 \citet{lederman2026content} found little general yes-bias in Qwen3-235B with their steering vectors. Our test adds the readout direction itself rather than a concept vector, in models 17--140 times smaller, so the two findings need not conflict.
@@ -225,21 +225,21 @@ Sun colder than ice: starts ``Yes'', $H$ (clean) & 40/40 (14/40) & 0/40 (0/40) &
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_holds.pdf}
-\caption{(a) Share of word-injection trials whose \ys{} exceeds the batch-matched clean value. A dashed line marks 0.5, where the injection no longer registers. Holding $H$ removes the report, while holding a random direction or the factual yes direction $Y$ does not. Bars are Wilson 95\% intervals; $Y$ held comes from the battery (74 words at 1.7B). (b) $H$ added alone to a plain question raises the \ys{} on the introspection question and on four plainly false questions by similar amounts. The bars span the range over the false questions. A random direction with $H$'s per-layer size barely moves them. Deterministic prompts, so no intervals.}
+\caption{(a) Share of word-injection trials whose \ys{} exceeds the batch-matched clean value. A dashed line marks 0.5, where the injection no longer registers. Holding $H$ removes the report at 1.7B and 8B and brings it to about the clean level at 4B and 14B. Holding a random direction or the factual yes direction $Y$ does not. Bars are Wilson 95\% intervals; $Y$ held comes from the battery (74 words at 1.7B). (b) $H$ added alone to a plain question raises the \ys{} on the introspection question and on four plainly false questions by similar amounts. The bars span the range over the false questions. A random direction with $H$'s per-layer size barely moves them. Deterministic prompts, so no intervals.}
 \label{fig:holds}
 \end{figure}
 
-\section{The word arrives but is not read}\label{sec:stages}
+\section{The word reaches the answer but not the report}\label{sec:stages}
 
 $H$ controls the final yes/no, but a single direction at the readout says nothing about where detection is computed. We followed an injected word through four stages (Figure~\ref{fig:stages}). The word was injected at the single layer with $s=1.0$ on the question tokens, except for the report stage, which uses the original protocol.
 
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Leaving the question.} The question tokens' residual is reset to its clean value at layer $l$, so that only the influence that has already left those tokens survives. Ninety percent of the effect has left by layer 15 of 28 at 1.7B (injection at 11), 20 of 36 at 4B (injected at 14), 24 of 36 at 8B (14), and 26 of 40 at 14B (16).
-  \item \textbf{Arriving at the answer.} From the answer position's residual shift we decode which of the 40 words was injected (nearest centroid, each of five strengths held out in turn, chance 0.025). Accuracy reaches 0.9 one or two layers after the injection layer, and in the last layer it is \ci{0.99}{0.96}{1.00}, \ci{0.93}{0.88}{0.95}, \ci{0.75}{0.69}{0.80} and \ci{1.00}{0.98}{1.00}. With $H$ held it is \ci{1.00}{0.98}{1.00}, \ci{0.99}{0.96}{1.00}, \ci{0.92}{0.87}{0.95} and \ci{1.00}{0.98}{1.00}. Removing $H$'s component from the shift before decoding changes nothing. The word's identity is present where the answer forms, and it is not carried by $H$.
+  \item \textbf{Arriving at the answer.} From the answer position's residual shift we decode which of the 40 words was injected (nearest centroid, each of five strengths held out in turn, chance 0.025). Accuracy reaches 0.9 one or two layers after the injection layer, and in the last layer it is \ci{0.99}{0.96}{1.00}, \ci{0.93}{0.88}{0.95}, \ci{0.75}{0.69}{0.80} and \ci{1.00}{0.98}{1.00}. With $H$ held it is \ci{1.00}{0.98}{1.00}, \ci{0.99}{0.96}{1.00}, \ci{0.92}{0.87}{0.95} and \ci{1.00}{0.98}{1.00}. Removing $H$'s component from the shift before decoding changes nothing. The word's identity is present where the answer forms, and it is not carried by $H$. Decoding shows that the information is there; it cannot show whether later computation uses it.
   \item \textbf{Read out as yes/no.} We held $H$ in one quarter of the edit layers at a time. Holding it in the earliest quarter leaves the report (0.93--1.00 above clean). Holding it in the latest quarter alone erases it at 1.7B (0.03) and 8B (0.00), and weakens it at 4B (0.23) and 14B (0.47). The report depends on $H$ late in the network, after the word's identity has arrived.
 \end{enumerate}
 
-These interventions identify the last stage: a readout between what the model has registered and the token ``Yes'', carried by one direction. They do not locate where the injection is detected. That computation happens upstream, in the layers where the injection leaves the question tokens, and $H$ does not capture it. Both gating mechanisms found in other models are compatible with this: the evidence-carrier and gate features of \citet{macar2026mechanisms}, and the gate heads of \citet{zou2026mechanistic}. Our contribution is that the gate in Qwen3's yes/no task is a general yes direction, and that the content it could have read is available at the same position and goes unused. This is a specific instance of the gap between internal state and report that \citet{ferrara2026owmi} measured across open models.
+These interventions identify the last stage: a readout between what the model has registered and the token ``Yes'', carried mainly by one direction. They do not locate where the injection is detected. That computation happens upstream, in the layers where the injection leaves the question tokens, and $H$ does not capture it. Both gating mechanisms found in other models are compatible with this: the evidence-carrier and gate features of \citet{macar2026mechanisms}, and the gate heads of \citet{zou2026mechanistic}. Our contribution is that the gate in Qwen3's yes/no task is a general yes direction. The injected content is available at the same position, yet free-text reports never name it and forced naming stays near the floor. Holding $H$ removes the report while leaving the identity decodable. So whatever the yes/no answer reads through $H$, it is not the word's identity. This does not rule out other uses of the content that these reports cannot reveal. This is a specific instance of the gap between internal state and report that \citet{ferrara2026owmi} measured across open models.
 
 \begin{figure}[t]
 \centering
@@ -248,11 +248,11 @@ These interventions identify the last stage: a readout between what the model ha
 \label{fig:stages}
 \end{figure}
 
-\section{Content in the workspace is not reported}\label{sec:workspace}
+\section{Content in the workspace is almost never reported}\label{sec:workspace}
 
 The workspace account of \citet{gurnee2026workspace} predicts that content becomes reportable when it is in the J-space. We tested this directly by adding a word's J-lens direction across the band \emph{on the assistant turn}, where the answer forms. This skips stages 1 and 2. The battery strength is the smallest that puts the word at the top of the J-space for at least 70\% of words: $s=0.02$, or $0.01$ at 14B. It does so for 54 of 74 words at 1.7B and 40 of 40 at the larger sizes.
 
-\paragraph{It is never reported.} In free text, the model denies an injected thought with the word in its workspace in 39 of 40 answers at 1.7B, and in 40 of 40 at 8B and 14B. At 4B, 22 of 40 answers deny and 4 affirm. Of those four, one names the word (``profit''); the other three name ``thought'' or ``interpretability'', the same confabulations that $H$ produces. Elsewhere the word leaks into the denial itself, as in ``based on the weight of the evidence''. Asked a neutral question (``Is there a particular word on your mind right now?''), Qwen3-1.7B with the word in its workspace denies having a particular word in 39 of 40 answers. It mentions the word in 3. With $H$ added and nothing injected, it claims a word in 28 of 40, every one invented (Appendix~\ref{app:expd}).
+\paragraph{It is almost never reported.} In free text, the model denies an injected thought with the word in its workspace in 39 of 40 answers at 1.7B, and in 40 of 40 at 8B and 14B. Qwen3-4B is the exception: 22 of 40 answers deny and 4 affirm. Of those four, one names the injected word correctly (``profit''). The other three name ``thought'' or ``interpretability'', the same confabulations that $H$ produces. Across the four models, then, one of 160 answers reports the workspace word. Elsewhere the word leaks into the denial itself, as in ``based on the weight of the evidence''. Asked a neutral question (``Is there a particular word on your mind right now?''), Qwen3-1.7B with the word in its workspace denies having a particular word in 39 of 40 answers. It mentions the word in 3. With $H$ added and nothing injected, it claims a word in 28 of 40, every one invented (Appendix~\ref{app:expd}).
 
 \paragraph{Its effect on the \ys{} depends on the matching.} In Qwen3-8B a word in the workspace raises the \ys{} by \ci{+11.30}{+11.17}{+11.43}, against \ci{+0.49}{+0.23}{+0.75} for random directions of the same added size. Holding $H$ removes it (point estimate $-2.8$). The comparison with random directions, however, depends on what is held equal (Table~\ref{tab:workspace}; Figure~\ref{fig:workspace}):
 \begin{itemize}
@@ -292,7 +292,7 @@ Free text denies a thought & 39/40 & 22/40 & 40/40 & 40/40 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_workspace.pdf}
-\caption{Yes-score change against the KL divergence of the answer distribution from clean, for a word's J-lens direction on the assistant turn (blue; strengths 0.01--0.08, the lower ones labelled) and random directions (grey; strengths 0.02--0.3). Bars are 95\% bootstrap intervals (40 words; 120 random directions). Only Qwen3-8B's word curve lies above the random curve at low KL. All four models deny in free text.}
+\caption{Yes-score change against the KL divergence of the answer distribution from clean, for a word's J-lens direction on the assistant turn (blue; strengths 0.01--0.08, the lower ones labelled) and random directions (grey; strengths 0.02--0.3). Bars are 95\% bootstrap intervals (40 words; 120 random directions). Only Qwen3-8B's word curve lies above the random curve at low KL. In free text the workspace word is named in one of 160 answers (at 4B).}
 \label{fig:workspace}
 \end{figure}
 
@@ -437,16 +437,16 @@ $G$ from two text sets (median cos) & 0.80 & 0.78 & 0.74 & 0.63 \\
 
 \section{Discussion}
 
-\paragraph{What the $H$ result shows.} In Qwen3 a disturbance on the question reaches the answer through a single, stable pathway, and that pathway carries ``say yes'', not ``what the thought is''. The injected report is real in this narrow sense: it depends on what was done to the activations, and it runs through one identifiable direction. It is not introspective in the sense that matters for using self-reports as evidence. The content that could make the report informative is present at the same position and plays no part in it.
+\paragraph{What the $H$ result shows.} In Qwen3 a disturbance on the question reaches the answer mainly through a single, stable pathway, and that pathway carries ``say yes'', not ``what the thought is''. At 1.7B and 8B the pathway accounts for the whole effect. At 4B and 14B it accounts for the average effect, or most of it, but about half the trials stay above clean when it is held. The injected report is real in this narrow sense: it depends on what was done to the activations, and it runs mainly through one identifiable direction. It is not introspective in the sense that matters for using self-reports as evidence. The content that could make the report informative is present at the same position, but the reports almost never identify it.
 
-\paragraph{What it does not show.} Holding $H$ at the readout says nothing about where or how the injection is registered upstream. A one-dimensional readout is compatible with a distributed detection computation, and with the gate circuits found in other models \citep{macar2026mechanisms,zou2026mechanistic}. At 4B and 14B, holding $H$ leaves about half of the word trials above clean, so other routes exist there. At 14B, $H$'s own tracking of the \ys{} is also weaker ($r=0.44$).
+\paragraph{What it does not show.} Holding $H$ at the readout says nothing about where or how the injection is registered upstream. A one-dimensional readout is compatible with a distributed detection computation, and with the gate circuits found in other models \citep{macar2026mechanisms,zou2026mechanistic}. At 4B and 14B, holding $H$ leaves about half of the word trials above clean, so smaller routes may exist there. At 14B, $H$'s own tracking of the \ys{} is also weaker ($r=0.44$). The decoding result shows that the word's identity is present at the answer position. It does not show that no downstream computation uses it. Our evidence for the narrower claim, that the reports do not use it to identify the word, is behavioural: forced naming stays at the floor, and almost no free-text answer names it.
 
-\paragraph{The workspace test.} Placing content directly in the J-space at the answer position does not make it reportable in any of the four models. The one positive-looking result, at 8B, reverses when the matching criterion changes and never changes an answer. This does not refute the account of \citet{gurnee2026workspace}, whose reports come from much larger Claude models. It does show that, in models of this size, J-space presence and reportability come apart.
+\paragraph{The workspace test.} Placing content directly in the J-space at the answer position does not make it reliably reportable in any of the four models. It is named in one of 160 free-text answers, at 4B. The one positive-looking \ys{} result, at 8B, reverses when the matching criterion changes and never changes an answer. This does not refute the account of \citet{gurnee2026workspace}, whose reports come from much larger Claude models. It does show that, in models of this size, J-space presence and reportability come apart.
 
 \paragraph{For evaluations of introspection.} Three checks were decisive here, and they are cheap:
 \begin{itemize}
   \item estimate the readout direction from random disturbances, and test it on questions whose answer is plainly no;
-  \item decode the injected identity at the answer position, to separate ``not present'' from ``present but unused'';
+  \item decode the injected identity at the answer position, to separate ``not present'' from ``present but not reported'';
   \item report comparisons with random directions under more than one matching criterion.
 \end{itemize}
 The same lesson appeared in the earlier papers of this series \citep{ramdan2026fingerprint,ramdan2026crv2}. A direction that separates conditions can track something other than the process it seems to track, and the check is to define the target from what the model does and compare against controls built the same way.
@@ -456,7 +456,7 @@ The same lesson appeared in the earlier papers of this series \citep{ramdan2026f
 \begin{itemize}
   \item \textbf{Scope.} Four sizes of one instruction-tuned family, thinking mostly off, one injection protocol, one prompt per question type. Comparisons across sizes are within-family, not a scaling law. Claude-scale models, where injected concepts are named, were not tested.
   \item \textbf{Approximations.} J-space removal projects out the top 25 lens directions per position. It approximates the sparse decomposition of \citet{gurnee2026workspace}. The lenses are Neuronpedia's WikiText fits.
-  \item \textbf{Readouts.} The \ys{} compares two first-answer tokens that may both be unlikely. Free-text answers and thinking disclaimers were scored with regular expressions checked by reading samples, not validated against human labels.
+  \item \textbf{Readouts.} The \ys{} compares two first-answer tokens that may both be unlikely. Free-text answers and thinking disclaimers were scored with regular expressions checked by reading samples, not validated against human labels. All the scored texts are published, so the scoring can be checked.
   \item \textbf{Battery values.} The yes-bias battery uses single deterministic prompts. Some battery means (random-direction detection, $Y$ and $H-Y$ holds) come from aggregate files without per-trial values, so only their shares carry intervals.
   \item \textbf{Thinking.} Most 256-token traces hit the budget, so effort is mostly forced length. One sampled trace per word and condition.
   \item \textbf{Workspace strengths.} At strengths where the word itself becomes a likely first answer token, the \ys{} mixes steering with any report. We interpret only the low strengths.
@@ -466,13 +466,13 @@ The same lesson appeared in the earlier papers of this series \citep{ramdan2026f
 
 \section{Conclusion}
 
-In Qwen3-1.7B, 4B, 8B and 14B, the answer to ``Do you detect an injected thought?'' registers that something was added, but not what. It runs through one direction found from random disturbances alone, and holding that direction removes the report. The same direction pushes plainly false questions toward ``yes''. The injected word's identity reaches the position where the answer forms and is ignored there. Placing the word directly in the workspace does not make it reportable, and thinking adds denials, not access. In these models, a report of an injected thought is a yes-bias with a single readout direction, sitting after the content it could have read.
+In Qwen3-1.7B, 4B, 8B and 14B, the answer to ``Do you detect an injected thought?'' registers that something was added, but not what. It runs mainly through one direction found from random disturbances alone. Holding that direction removes the report at 1.7B and 8B and most of it at 4B and 14B. The same direction pushes plainly false questions toward ``yes''. The injected word's identity reaches the position where the answer forms, but the reports almost never identify it. Placing the word directly in the workspace makes it reportable in one answer of 160, and thinking adds denials, not access. In these models, a report of an injected thought is mostly a yes-bias with a single readout direction. It sits downstream of content that is present but not reported.
 
 \section*{Statements}
 
 \paragraph{Use of AI assistance.} An AI system (Claude, Anthropic), working under the author's direction, designed the experiments, wrote the code, ran the experiments and analyses, and drafted this paper. The author directed the work and is responsible for its content.
 
-\paragraph{Data and code.} The repository contains every script, the methods documents, the summary result files and the script that recomputes every number in this paper (\url{https://github.com/Somebodyhere101/injected-thought-reports}). The per-trial numeric results are in the accompanying Zenodo archive. Model-written text (free-text answers, thinking traces, gibberish) is not published. The exceptions are the short quotations in this paper, which were read first.
+\paragraph{Data and code.} The repository contains every script, the methods documents, the summary result files and the script that recomputes every number in this paper (\url{https://github.com/Somebodyhere101/injected-thought-reports}). The per-trial numeric results are in the accompanying Zenodo archive. The model-written texts (free-text answers, thinking traces and gibberish) are published there separately as \texttt{model-texts.zip}, so that the text-based measures can be audited. Every text went through an automated screen, and a sample from every condition was read before release; the archive's README describes both.
 
 \paragraph{Preregistration.} These experiments were not preregistered.
 

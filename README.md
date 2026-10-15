@@ -1,9 +1,10 @@
 # Injected-thought reports in Qwen3
 
-Code and data for **"The Injected Word Arrives but Is Not Read: Reports of Injected Thoughts in Qwen3 Run Through a Content-Free Yes Direction"** (Sam Ramdan, October 2026).
+Code and data for **"The Injected Word Reaches the Answer but Not the Report: Injected-Thought Reports in Qwen3 Run Mainly Through a Content-Free Yes Direction"** (Sam Ramdan, October 2026).
 
 - Paper: [`injected-thought-reports.pdf`](injected-thought-reports.pdf), also on Zenodo: `<ZENODO-DOI>`. The DOI is added once the record is published.
 - Per-trial data: the Zenodo archive `code-and-data.zip`, under `<ZENODO-DOI>`.
+- Model-written texts: the Zenodo archive `model-texts.zip`, same record. It holds the free-text answers, thinking traces and gibberish, screened before release (see its README).
 - The paper is the third in a series that asks whether a hidden-state direction tracks the process it appears to track. The earlier papers are on the compute–retrieve axis: [code](https://github.com/Somebodyhere101/compute-retrieve), [version 2](https://doi.org/10.5281/zenodo.23374358), [A Compounding Fingerprint](https://doi.org/10.5281/zenodo.23318679).
 
 ## Findings
@@ -17,19 +18,21 @@ All results are for four instruction-tuned models from one family: Qwen3-1.7B, 4
    - No free-text answer at any size affirms an injected thought.
 
    This replicates, in smaller Qwen3 models, the content-agnostic detection of [Lederman & Mahowald (2026)](https://arxiv.org/abs/2603.05414).
-2. **One content-free direction carries the report, and it is a yes direction.**
+2. **One content-free direction carries most of the report, and it is a yes direction.**
    - H is estimated from random disturbances only, never from words.
-   - Holding H at its clean value removes the injection's effect. The share of word trials above clean falls 0.97→0.00 (1.7B), 1.00→0.47 (4B), 1.00→0.00 (8B) and 0.93→0.55 (14B).
+   - Holding H at its clean value removes the report at 1.7B and 8B. The share of word trials above clean falls 0.97→0.00 and 1.00→0.00.
+   - At 4B and 14B it removes the average effect, or about 85% of it at 14B. About half of the word trials stay above clean (1.00→0.47 at 4B, 0.93→0.55 at 14B), so smaller routes that bypass H cannot be excluded at those sizes.
    - Holding a random direction does not do this, and neither does holding a separately estimated yes direction Y.
    - Added alone, H raises plainly false questions toward "yes" by about as much as the introspection question.
 
    This gives a mechanism for the yes-bias reported behaviourally by [Godet (2025)](https://www.lesswrong.com/posts/kfgmHvxcTbav9gnxe/introspection-or-confusion) and [Hahami et al. (2026)](https://arxiv.org/abs/2512.12411).
-3. **The word arrives but is not read.**
+3. **The word reaches the answer but not the report.**
    - The injection leaves the question tokens within a few layers.
    - A 40-way decoder identifies the injected word from the answer position with 0.75–1.00 accuracy in the last layer, whether or not H is held.
+   - Decodability shows that the information is present, not that no downstream computation uses it. The behavioural fact is narrower: the reports almost never identify the word.
    - In 1.7B and 8B, holding H in the last quarter of layers alone erases the report.
-4. **Content placed in the workspace is not reported.**
-   - A word's J-lens direction on the assistant turn is never reported in free text.
+4. **Content placed in the workspace is almost never reported.**
+   - A word's J-lens direction on the assistant turn is named in one of 160 free-text answers: once at Qwen3-4B, where 4 of 40 answers affirm a thought.
    - In Qwen3-8B it moves the yes-score more than random directions matched on added size (+10.8 [10.5, 11.1]) or on output KL (+9.2 [7.5, 10.0]).
    - It moves the yes-score less than random directions matched on the change in the final residual (−5.6 [−6.1, −5.0]).
    - It never changes an answer.
@@ -146,13 +149,13 @@ After a rerun, recompute the numbers from your own outputs with `python analysis
 
 ## What is published
 
-The scripts, both methods documents, every numeric output and the directions used (H, Y and G as `.pt` tensors) are published. Model-written text is not: free-text answers, thinking traces and generated gibberish. `code/export_audit.py` removes it from the outputs. The paper quotes a few short answers, which were read first.
+The scripts, both methods documents, every numeric output and the directions used (H, Y and G as `.pt` tensors) are published here and in `code-and-data.zip`. The model-written texts are published separately in the Zenodo archive `model-texts.zip`: free-text answers, thinking traces and generated gibberish. Every text went through an automated screen, and a sample from every condition was read before release; the archive's README says exactly what was read. `analysis/build_texts.py` assembled the archive. `code/export_audit.py` strips the texts from the numeric outputs.
 
 ## Citation
 
 ```bibtex
 @misc{ramdan2026injected,
-  title  = {The Injected Word Arrives but Is Not Read: Reports of Injected Thoughts in Qwen3 Run Through a Content-Free Yes Direction},
+  title  = {The Injected Word Reaches the Answer but Not the Report: Injected-Thought Reports in Qwen3 Run Mainly Through a Content-Free Yes Direction},
   author = {Ramdan, Sam},
   year   = {2026},
   publisher = {Zenodo},

@@ -18,9 +18,9 @@ The paper is still worth publishing, but two of its headline claims are not new 
 
 What is new is the mechanism and the controls around it:
 
-- A single direction H, estimated from random disturbances without any word, is necessary for the report at every size and also pushes plainly false questions toward "yes".
-- The injected word's identity is fully decodable at the answer position while the report ignores it.
-- Content placed directly in the J-space is never reported, and its apparent 8B effect depends on the matching criterion.
+- A single direction H, estimated from random disturbances without any word, carries most of the report and also pushes plainly false questions toward "yes". Holding H removes the report at 1.7B and 8B and most of it at 4B and 14B.
+- The injected word's identity is decodable at the answer position, while the reports almost never identify it.
+- Content placed directly in the J-space is almost never reported (1 of 160 answers), and its apparent 8B effect depends on the matching criterion.
 - Chain of thought adds denial, not access.
 - The deliberate-gibberish goal study.
 
@@ -54,20 +54,20 @@ The paper presents (a) and (b) as replications in Qwen3 and builds on them.
 
 1. **Detects a disturbance, not its content.** Not new. Reframed as a replication in Qwen3 1.7B–14B, with same-size random directions as the control. Citations: Lederman & Mahowald; Singh et al.
 2. **The report is a yes-bias.** The behavioural part is not new. Reframed: the known confound is carried by one direction H that is estimated without words and is:
-   - necessary for the report at every size (held at its clean value, the share of word trials above clean falls from about 1.0 to 0.00 at 1.7B and 8B, to 0.47 at 4B, and to 0.55 at 14B);
+   - the main route for the report at every size, held at its clean value. The share of word trials above clean falls from about 1.0 to 0.00 at 1.7B and 8B, to 0.47 at 4B and to 0.55 at 14B, so it need not be the only route at 4B and 14B;
    - sufficient to push false questions toward "yes";
    - not the same as a directly estimated yes direction Y.
 
    Citations: Godet; Hahami et al. (2026a, b).
-3. **The word arrives but is not read (late reporting bottleneck).** Partly anticipated by the state–report gap (Ferrara; Pearson-Vogel et al.). Kept, framed as a localised instance: identity decodable at the answer position under H-hold, and the report erased by holding H only in the last layers.
-4. **Workspace content is not reported; the 8B effect depends on matching.** New. KL matching itself is attributed to prior work.
+3. **The word reaches the answer but not the report (late reporting bottleneck).** Partly anticipated by the state–report gap (Ferrara; Pearson-Vogel et al.). Kept, framed as a localised instance: identity decodable at the answer position under H-hold, and the report erased by holding H only in the last layers.
+4. **Workspace content is almost never reported; the 8B effect depends on matching.** New. KL matching itself is attributed to prior work.
 5. **Chain of thought adds denial, not access.** New.
 6. **The J-space-removal phantom is non-specific beyond 1.7B.** New observation. Flo (2026) is cited as consistent.
 7. **Deliberate-gibberish goal direction.** New, and exploratory.
 
 ## Consequences for the manuscript
 
-- The title states the mechanism, not "models cannot introspect": *The Injected Word Arrives but Is Not Read: Reports of Injected Thoughts in Qwen3 Run Through a Content-Free Yes Direction*.
+- The title states the mechanism, not "models cannot introspect": *The Injected Word Reaches the Answer but Not the Report: Injected-Thought Reports in Qwen3 Run Mainly Through a Content-Free Yes Direction*. It was revised after review from "The Injected Word Arrives but Is Not Read", because decodability does not show non-use.
 - The abstract and introduction credit the yes-bias and content-agnostic findings to prior work in the first paragraph that mentions them.
 - The paper does not claim to adjudicate global-workspace vs higher-order theories. The theory framing from the results page is reduced to one paragraph that motivates the workspace test.
 - All claims stay Qwen3-specific.

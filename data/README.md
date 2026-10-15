@@ -16,4 +16,5 @@ This folder is not tracked in git. Copy here the `data/` folder from the Zenodo 
 | `directions/gib_G_<size>.pt` | The goal direction G per layer |
 
 Model-written text (thinking traces, free-text answers, generated gibberish) has been removed from
-every file (see `code/export_audit.py`).
+every file (see `code/export_audit.py`). It is published separately as `model-texts.zip` in the
+same Zenodo record.

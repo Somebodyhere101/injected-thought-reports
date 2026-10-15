@@ -162,8 +162,8 @@ position, (4) the readout into the first answer token.
 | Holding or adding H, Y or a random direction; J-space removal | 3–4, assistant turn only | what the final yes/no depends on | where detection is computed; whether upstream processing is one-dimensional |
 | Thinking budget | between 3 and 4 | whether generated text changes the report | internal processing during thinking |
 
-Holding H is necessary for the report in all three models, but H is one direction at the
-readout; the stage-3 decoding shows the word's identity is present at the answer position
+Holding H removes the report at 1.7B and 8B and most of it at 4B and 14B, where about half of the
+word trials stay above clean. H is one direction at the readout; the stage-3 decoding shows the word's identity is present at the answer position
 whether or not H is held. The H results therefore identify a reporting bottleneck, not the
 mechanism that registers the injection.
 
@@ -250,10 +250,12 @@ matched controls 1 min each, thinking grid 9 min at 8B and 17 min at 14B.
 
 ## What is published and what is not
 
-The repository and the Zenodo archive publish the code, this document and the per-trial numeric
-outputs with model-written text removed (`code/export_audit.py` lists the removed fields). Raw
-model text, meaning thinking traces, free-text answers and gibberish, is not published. Two
-analysis scripts need that text and are included so that the method is visible:
+The repository and `code-and-data.zip` publish the code, this document and the per-trial numeric
+outputs with model-written text removed (`code/export_audit.py` lists the removed fields). The
+model-written texts (thinking traces, free-text answers and gibberish) are published separately
+as `model-texts.zip` in the same Zenodo record. `analysis/build_texts.py` assembled them and
+screened every text, and a sample from every condition was read before release. Two analysis
+scripts derive counts from the texts:
 - `analysis/thinking_denials.py` writes only counts, to `results/thinking_denials.json`.
 - `analysis/free_text_checks.py` writes only counts, to `results/free_text_checks.json`.
 

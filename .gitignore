@@ -25,3 +25,7 @@ paper/*.out
 paper/main.pdf
 paper/figures/*.aux
 paper/figures/*.log
+
+# Model-written texts are published on Zenodo (model-texts.zip), not in git
+model_texts/
+_samples.txt
