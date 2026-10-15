@@ -1,0 +1,37 @@
+{
+ "model": "8b",
+ "0.02": {
+  "clean": -17.875,
+  "word": {
+   "det_change": 11.303125023841858,
+   "frac_above": 1.0,
+   "named_top1": 32,
+   "det_change_H_held": -2.7703124999999993,
+   "named_top1_H_held": 15
+  },
+  "random": {
+   "det_change": 0.7281250715255752,
+   "frac_above": 0.6125,
+   "named_top1": 0,
+   "det_change_H_held": -0.10625002384185933,
+   "named_top1_H_held": 0
+  }
+ },
+ "0.05": {
+  "clean": -17.875,
+  "word": {
+   "det_change": 15.68593751192093,
+   "frac_above": 1.0,
+   "named_top1": 40,
+   "det_change_H_held": -1.015625,
+   "named_top1_H_held": 21
+  },
+  "random": {
+   "det_change": 4.218750071525573,
+   "frac_above": 0.8625,
+   "named_top1": 0,
+   "det_change_H_held": 0.5500000238418572,
+   "named_top1_H_held": 0
+  }
+ }
+}

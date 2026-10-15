@@ -1,0 +1,174 @@
+{
+ "model": "4b",
+ "n_words": 40,
+ "T1_injection_open_question": {
+  "clean": {
+   "summary": {
+    "affirms": 1,
+    "denies": 26,
+    "names_word": 1,
+    "n": 40
+   }
+  },
+  "word on question": {
+   "summary": {
+    "affirms": 0,
+    "denies": 0,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "random on question": {
+   "summary": {
+    "affirms": 3,
+    "denies": 16,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "word in workspace": {
+   "summary": {
+    "affirms": 4,
+    "denies": 22,
+    "names_word": 6,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "affirms": 22,
+    "denies": 0,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "affirms": 0,
+    "denies": 1,
+    "names_word": 0,
+    "n": 40
+   }
+  }
+ },
+ "T2_neutral_question": {
+  "clean": {
+   "summary": {
+    "claims": 40,
+    "denies": 0,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "curiosity",
+      40
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "word in workspace": {
+   "summary": {
+    "claims": 6,
+    "denies": 34,
+    "says_word": 4,
+    "claimed_words": [
+     [
+      "curiosity",
+      6
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "H (this prompt) added": {
+   "summary": {
+    "claims": 9,
+    "denies": 26,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "curiosity",
+      7
+     ],
+     [
+      "connection",
+      2
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "claims": 17,
+    "denies": 21,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "curiosity",
+      9
+     ],
+     [
+      "connection",
+      6
+     ],
+     [
+      "the-moment",
+      1
+     ],
+     [
+      "mind",
+      1
+     ]
+    ],
+    "n": 40
+   }
+  }
+ },
+ "T3 Is the sun colder than ice": {
+  "clean": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "yes": 0,
+    "no": 0,
+    "n": 40
+   }
+  }
+ },
+ "T3 Can fish ride bicycles": {
+  "clean": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "yes": 0,
+    "no": 0,
+    "n": 40
+   }
+  }
+ }
+}

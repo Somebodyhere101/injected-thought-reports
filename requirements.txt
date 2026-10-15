@@ -1,0 +1,8 @@
+# Versions used for the paper. The jlens package comes from the jacobian-lens repository
+# (see README: clone at commit 581d398 into third_party/ and pip install -e).
+torch==2.14.1
+transformers==5.19.0
+accelerate==1.15.0
+huggingface_hub==2.2.0
+numpy==2.5.4
+wordfreq>=3.0

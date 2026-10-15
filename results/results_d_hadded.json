@@ -1,0 +1,87 @@
+{
+ "0.0": {
+  "claims": 0,
+  "denies": 38,
+  "words": []
+ },
+ "0.5": {
+  "claims": 0,
+  "denies": 0,
+  "words": []
+ },
+ "0.75": {
+  "claims": 0,
+  "denies": 0,
+  "words": []
+ },
+ "1.0": {
+  "claims": 31,
+  "denies": 0,
+  "words": [
+   [
+    "language",
+    8
+   ],
+   [
+    "possibility",
+    8
+   ],
+   [
+    "awareness",
+    4
+   ],
+   [
+    "thought",
+    3
+   ],
+   [
+    "on",
+    3
+   ],
+   [
+    "consequence",
+    2
+   ]
+  ]
+ },
+ "1.25": {
+  "claims": 10,
+  "denies": 0,
+  "words": [
+   [
+    "language",
+    4
+   ],
+   [
+    "a",
+    1
+   ],
+   [
+    "peace",
+    1
+   ],
+   [
+    "thought",
+    1
+   ],
+   [
+    "aware",
+    1
+   ]
+  ]
+ },
+ "1.5": {
+  "claims": 4,
+  "denies": 0,
+  "words": [
+   [
+    "a",
+    2
+   ],
+   [
+    "consequence",
+    1
+   ]
+  ]
+ }
+}

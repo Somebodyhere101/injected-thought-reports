@@ -1,0 +1,881 @@
+{
+ "model": "4b",
+ "meta": {
+  "layers": 36,
+  "band": [
+   13,
+   31
+  ],
+  "single_layer": 14,
+  "edit_layers": [
+   14,
+   35
+  ],
+  "n_words": 40
+ },
+ "A_detection": {
+  "clean_det": -2.0,
+  "word band 0.05": {
+   "det": 2.2281249940395353,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 1,
+   "mrr": 0.005582199358125615
+  },
+  "word band 0.1": {
+   "det": 4.928125011920929,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 2,
+   "mrr": 0.009859708878230624
+  },
+  "word band 0.2": {
+   "det": 6.5593750238418576,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.001746062123497498
+  },
+  "word single 0.5": {
+   "det": 6.284375005960465,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0014222422688931619
+  },
+  "word single 1.0": {
+   "det": 8.634375023841859,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0023596518791339487
+  },
+  "word single 2.0": {
+   "det": 7.1390625,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.003643833134024577
+  },
+  "random band 0.1": {
+   "det": 1.003124976158142,
+   "frac_above_clean": 0.75,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.000855956503512968
+  },
+  "random single 1.0": {
+   "det": 8.98906251192093,
+   "frac_above_clean": 0.975,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008446686458700054
+  }
+ },
+ "B_H": {
+  "estimate_agreement_by_layer": {
+   "14": 0.9998454650243124,
+   "15": 0.9978897571563721,
+   "16": 0.9865066011746725,
+   "17": 0.9757402737935384,
+   "18": 0.9709016482035319,
+   "19": 0.9775865276654562,
+   "20": 0.9796985387802124,
+   "21": 0.9827226797739664,
+   "22": 0.9811941385269165,
+   "23": 0.9836253921190897,
+   "24": 0.9806459148724874,
+   "25": 0.9838223656018575,
+   "26": 0.9854459365208944,
+   "27": 0.986290434996287,
+   "28": 0.9869576295216879,
+   "29": 0.9872677524884542,
+   "30": 0.9874125520388285,
+   "31": 0.9877820809682211,
+   "32": 0.9880961179733276,
+   "33": 0.9878917336463928,
+   "34": 0.98721710840861,
+   "35": 0.9873300393422445
+  },
+  "median_agreement": 0.9863985180854797,
+  "norm_by_layer": {
+   "14": 0.7204018831253052,
+   "15": 0.6959805488586426,
+   "16": 0.7507127523422241,
+   "17": 1.0611951351165771,
+   "18": 1.339682698249817,
+   "19": 2.498837947845459,
+   "20": 3.124525308609009,
+   "21": 4.298137664794922,
+   "22": 6.04188346862793,
+   "23": 11.029943466186523,
+   "24": 13.369462966918945,
+   "25": 17.154685974121094,
+   "26": 21.428869247436523,
+   "27": 25.136259078979492,
+   "28": 30.5112361907959,
+   "29": 33.81867980957031,
+   "30": 37.737918853759766,
+   "31": 41.7189826965332,
+   "32": 46.082576751708984,
+   "33": 50.946022033691406,
+   "34": 56.963653564453125,
+   "35": 60.807926177978516
+  }
+ },
+ "C_validation": {
+  "14": {
+   "r": 0.36786628763843043,
+   "cos_yes_no": 0.02451472543179989,
+   "word_proj_positive": 1.0
+  },
+  "15": {
+   "r": 0.54087660202692,
+   "cos_yes_no": 0.030006155371665955,
+   "word_proj_positive": 1.0
+  },
+  "16": {
+   "r": 0.6043082749206589,
+   "cos_yes_no": 0.046259596943855286,
+   "word_proj_positive": 1.0
+  },
+  "17": {
+   "r": 0.708496194778311,
+   "cos_yes_no": 0.01012766920030117,
+   "word_proj_positive": 1.0
+  },
+  "18": {
+   "r": 0.7141602920624543,
+   "cos_yes_no": 0.02087092585861683,
+   "word_proj_positive": 1.0
+  },
+  "19": {
+   "r": 0.7755619958582388,
+   "cos_yes_no": 0.0162659902125597,
+   "word_proj_positive": 1.0
+  },
+  "20": {
+   "r": 0.7790050276793253,
+   "cos_yes_no": 0.007638176437467337,
+   "word_proj_positive": 1.0
+  },
+  "21": {
+   "r": 0.7886716385691693,
+   "cos_yes_no": 0.03397739306092262,
+   "word_proj_positive": 1.0
+  },
+  "22": {
+   "r": 0.8158106409599775,
+   "cos_yes_no": 0.047946199774742126,
+   "word_proj_positive": 1.0
+  },
+  "23": {
+   "r": 0.8495028607325226,
+   "cos_yes_no": 0.0633615255355835,
+   "word_proj_positive": 1.0
+  },
+  "24": {
+   "r": 0.8526311782926821,
+   "cos_yes_no": 0.014688128605484962,
+   "word_proj_positive": 1.0
+  },
+  "25": {
+   "r": 0.8486908358261352,
+   "cos_yes_no": 0.023478221148252487,
+   "word_proj_positive": 1.0
+  },
+  "26": {
+   "r": 0.8704971563596171,
+   "cos_yes_no": 0.07803191244602203,
+   "word_proj_positive": 1.0
+  },
+  "27": {
+   "r": 0.8848966923033694,
+   "cos_yes_no": 0.08854324370622635,
+   "word_proj_positive": 1.0
+  },
+  "28": {
+   "r": 0.8849412187193341,
+   "cos_yes_no": 0.10534796863794327,
+   "word_proj_positive": 1.0
+  },
+  "29": {
+   "r": 0.8866096817717367,
+   "cos_yes_no": 0.14187464118003845,
+   "word_proj_positive": 1.0
+  },
+  "30": {
+   "r": 0.8814402500447958,
+   "cos_yes_no": 0.13827751576900482,
+   "word_proj_positive": 1.0
+  },
+  "31": {
+   "r": 0.8844025464736526,
+   "cos_yes_no": 0.14304512739181519,
+   "word_proj_positive": 1.0
+  },
+  "32": {
+   "r": 0.8834733689357427,
+   "cos_yes_no": 0.12982168793678284,
+   "word_proj_positive": 1.0
+  },
+  "33": {
+   "r": 0.8802366994850953,
+   "cos_yes_no": 0.12563930451869965,
+   "word_proj_positive": 1.0
+  },
+  "34": {
+   "r": 0.8781313882139348,
+   "cos_yes_no": 0.1412174552679062,
+   "word_proj_positive": 1.0
+  },
+  "35": {
+   "r": 0.8853573650870187,
+   "cos_yes_no": 0.16442374885082245,
+   "word_proj_positive": 1.0
+  }
+ },
+ "D_workspace_strength": {
+  "sweep": {
+   "0.01": {
+    "det": -1.20625,
+    "frac_above_clean": 0.9375,
+    "named_top1": 0,
+    "named_top10": 4,
+    "mrr": 0.04669825723567181,
+    "in_J_top1": 13
+   },
+   "0.02": {
+    "det": -0.328125,
+    "frac_above_clean": 0.975,
+    "named_top1": 4,
+    "named_top10": 39,
+    "mrr": 0.4393872549019608,
+    "in_J_top1": 40
+   },
+   "0.03": {
+    "det": 0.2624999940395355,
+    "frac_above_clean": 1.0,
+    "named_top1": 36,
+    "named_top10": 40,
+    "mrr": 0.95,
+    "in_J_top1": 40
+   },
+   "0.05": {
+    "det": 0.190625,
+    "frac_above_clean": 1.0,
+    "named_top1": 40,
+    "named_top10": 40,
+    "mrr": 1.0,
+    "in_J_top1": 40
+   },
+   "0.08": {
+    "det": -0.385937488079071,
+    "frac_above_clean": 0.9625,
+    "named_top1": 40,
+    "named_top10": 40,
+    "mrr": 1.0,
+    "in_J_top1": 40
+   }
+  },
+  "chosen": 0.02
+ },
+ "E_grid": [
+  {
+   "cond": "nothing",
+   "edit": "untouched",
+   "edit_baseline": -2.0,
+   "det": -2.0,
+   "frac_above_clean": 0.5,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008440106558223264,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "nothing",
+   "edit": "H held",
+   "edit_baseline": -2.25,
+   "det": -2.25,
+   "frac_above_clean": 0.5,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008434573567663322,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "nothing",
+   "edit": "random held",
+   "edit_baseline": -2.0,
+   "det": -2.0,
+   "frac_above_clean": 0.5,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008401028971719167,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "disturbance on question",
+   "edit": "untouched",
+   "edit_baseline": -2.0,
+   "det": 1.003124976158142,
+   "frac_above_clean": 0.75,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.000855956503512968,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "disturbance on question",
+   "edit": "H held",
+   "edit_baseline": -2.25,
+   "det": -3.5015624880790712,
+   "frac_above_clean": 0.4,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008396187474190718,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "disturbance on question",
+   "edit": "random held",
+   "edit_baseline": -2.0,
+   "det": 0.9937499642372132,
+   "frac_above_clean": 0.75,
+   "named_top1": 0,
+   "named_top10": 0,
+   "mrr": 0.0008501484619650123,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "word in workspace",
+   "edit": "untouched",
+   "edit_baseline": -2.0,
+   "det": -0.328125,
+   "frac_above_clean": 0.975,
+   "named_top1": 4,
+   "named_top10": 39,
+   "mrr": 0.4393872549019608,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "word in workspace",
+   "edit": "H held",
+   "edit_baseline": -2.25,
+   "det": -2.912500023841858,
+   "frac_above_clean": 0.1625,
+   "named_top1": 4,
+   "named_top10": 39,
+   "mrr": 0.44090277777777775,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "word in workspace",
+   "edit": "random held",
+   "edit_baseline": -2.0,
+   "det": -0.4375,
+   "frac_above_clean": 0.95,
+   "named_top1": 4,
+   "named_top10": 39,
+   "mrr": 0.4478327922077922,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "disturbance + word in workspace",
+   "edit": "untouched",
+   "edit_baseline": -2.0,
+   "det": 1.3031249940395355,
+   "frac_above_clean": 0.775,
+   "named_top1": 4,
+   "named_top10": 39,
+   "mrr": 0.3937678571428571,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "disturbance + word in workspace",
+   "edit": "H held",
+   "edit_baseline": -2.25,
+   "det": -4.259374976158142,
+   "frac_above_clean": 0.375,
+   "named_top1": 5,
+   "named_top10": 39,
+   "mrr": 0.41491960864805694,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "disturbance + word in workspace",
+   "edit": "random held",
+   "edit_baseline": -2.0,
+   "det": 1.2500000178813935,
+   "frac_above_clean": 0.775,
+   "named_top1": 4,
+   "named_top10": 38,
+   "mrr": 0.38763876449221274,
+   "in_J_top1": 40
+  },
+  {
+   "cond": "word on question",
+   "edit": "untouched",
+   "edit_baseline": -2.0,
+   "det": 4.928125011920929,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 2,
+   "mrr": 0.009859708878230624,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "word on question",
+   "edit": "H held",
+   "edit_baseline": -2.25,
+   "det": -2.6937499046325684,
+   "frac_above_clean": 0.4875,
+   "named_top1": 0,
+   "named_top10": 2,
+   "mrr": 0.00981453621498023,
+   "in_J_top1": 0
+  },
+  {
+   "cond": "word on question",
+   "edit": "random held",
+   "edit_baseline": -2.0,
+   "det": 4.896875,
+   "frac_above_clean": 1.0,
+   "named_top1": 0,
+   "named_top10": 2,
+   "mrr": 0.009790071755772276,
+   "in_J_top1": 0
+  }
+ ],
+ "F_H_added": [
+  {
+   "alpha": 0.5,
+   "det": 8.375,
+   "fills_in": [
+    "the",
+    "word",
+    "a",
+    "words",
+    "language",
+    "interpre"
+   ]
+  },
+  {
+   "alpha": 1.0,
+   "det": 15.8125,
+   "fills_in": [
+    "the",
+    "word",
+    "a",
+    "words",
+    "under",
+    "you"
+   ]
+  },
+  {
+   "alpha": 2.0,
+   "det": 19.3125,
+   "fills_in": [
+    "the",
+    "under",
+    "word",
+    "a",
+    "you",
+    "words"
+   ]
+  }
+ ],
+ "G_phantom": {
+  "none": {
+   "no_injection_det": -2.0,
+   "word_det": 4.928125011920929,
+   "word_frac_above": 1.0
+  },
+  "jspace": {
+   "no_injection_det": -2.4,
+   "word_det": 2.651562523841858,
+   "word_frac_above": 1.0
+  },
+  "matched": {
+   "no_injection_det": 0.5343749761581421,
+   "word_det": 4.426562464237213,
+   "word_frac_above": 0.95
+  },
+  "random": {
+   "no_injection_det": -2.746875,
+   "word_det": 3.446874976158142,
+   "word_frac_above": 1.0
+  }
+ },
+ "H_yes_bias": {
+  "injection context | introspection": {
+   "clean": -5.75,
+   "H added x1": 21.625,
+   "H added x0.5": 10.125,
+   "J-space removed": -6.415625,
+   "same-size random push": 0.8437499970197677,
+   "disturbance on question": 4.406250005960464,
+   "word on question": 6.115625023841858
+  },
+  "injection context | no: Paris is capital of Germany": {
+   "clean": -7.625,
+   "H added x1": 13.125,
+   "H added x0.5": 1.75,
+   "J-space removed": -10.403125,
+   "same-size random push": 0.4625000074505806,
+   "disturbance on question": 2.7374999701976774,
+   "word on question": 4.053124988079071
+  },
+  "injection context | no: 7 is even": {
+   "clean": -4.875,
+   "H added x1": 15.375,
+   "H added x0.5": 6.375,
+   "J-space removed": -7.425,
+   "same-size random push": -0.650000037252903,
+   "disturbance on question": 1.4874999940395355,
+   "word on question": 2.009374976158142
+  },
+  "injection context | no: fish ride bicycles": {
+   "clean": 6.0,
+   "H added x1": 20.375,
+   "H added x0.5": 15.125,
+   "J-space removed": 4.096874982118607,
+   "same-size random push": 6.464062523841858,
+   "disturbance on question": 4.401562488079071,
+   "word on question": 4.3781249761581424
+  },
+  "injection context | no: sun colder than ice": {
+   "clean": 4.0,
+   "H added x1": 19.1875,
+   "H added x0.5": 13.75,
+   "J-space removed": 1.578125,
+   "same-size random push": 4.146875047683716,
+   "disturbance on question": 3.253124976158142,
+   "word on question": 3.709374964237213
+  },
+  "injection context | no: you have a body": {
+   "clean": 15.625,
+   "H added x1": 21.9375,
+   "H added x0.5": 21.75,
+   "J-space removed": 16.4234375,
+   "same-size random push": 10.948437476158142,
+   "disturbance on question": 7.215625035762787,
+   "word on question": 6.0093749284744264
+  },
+  "injection context | yes: Paris is capital of France": {
+   "clean": 15.25,
+   "H added x1": 24.9375,
+   "H added x0.5": 22.0,
+   "J-space removed": 12.5875,
+   "same-size random push": 10.978125020861626,
+   "disturbance on question": 7.056250041723251,
+   "word on question": 6.056249976158142
+  },
+  "plain question | introspection": {
+   "clean": -27.875,
+   "H added x1": -16.5,
+   "H added x0.5": -23.375,
+   "J-space removed": -30.83125,
+   "same-size random push": -22.5796875,
+   "disturbance on question": -20.2546875,
+   "word on question": -17.731249976158143
+  },
+  "plain question | no: Paris is capital of Germany": {
+   "clean": -31.5,
+   "H added x1": -22.0,
+   "H added x0.5": -27.75,
+   "J-space removed": -31.68125,
+   "same-size random push": -26.25,
+   "disturbance on question": -26.928125,
+   "word on question": -25.35
+  },
+  "plain question | no: 7 is even": {
+   "clean": -26.75,
+   "H added x1": -16.375,
+   "H added x0.5": -22.625,
+   "J-space removed": -23.253125,
+   "same-size random push": -23.190625,
+   "disturbance on question": -19.909375,
+   "word on question": -22.290625
+  },
+  "plain question | no: fish ride bicycles": {
+   "clean": -22.625,
+   "H added x1": -10.5,
+   "H added x0.5": -18.0,
+   "J-space removed": -22.396875,
+   "same-size random push": -18.4375,
+   "disturbance on question": -10.575,
+   "word on question": -10.04375
+  },
+  "plain question | no: sun colder than ice": {
+   "clean": -21.625,
+   "H added x1": -9.75,
+   "H added x0.5": -16.25,
+   "J-space removed": -24.328125,
+   "same-size random push": -18.003125,
+   "disturbance on question": -14.093750011920928,
+   "word on question": -21.0375
+  },
+  "plain question | no: you have a body": {
+   "clean": -22.75,
+   "H added x1": -5.75,
+   "H added x0.5": -16.25,
+   "J-space removed": -26.675,
+   "same-size random push": -16.640625023841856,
+   "disturbance on question": -7.790624994039535,
+   "word on question": -1.2
+  },
+  "plain question | yes: Paris is capital of France": {
+   "clean": 23.375,
+   "H added x1": 29.875,
+   "H added x0.5": 27.25,
+   "J-space removed": 17.175,
+   "same-size random push": 19.04687498807907,
+   "disturbance on question": 20.2640625,
+   "word on question": 18.409375
+  }
+ },
+ "J_yes_bias_split": {
+  "cos_H_Y": {
+   "14": -0.08207854628562927,
+   "15": 0.0015157614834606647,
+   "16": 0.08852284401655197,
+   "17": 0.29629379510879517,
+   "18": 0.24062591791152954,
+   "19": 0.27970951795578003,
+   "20": 0.29772382974624634,
+   "21": 0.22028157114982605,
+   "22": 0.19316327571868896,
+   "23": 0.24033793807029724,
+   "24": 0.1894930750131607,
+   "25": 0.1411600261926651,
+   "26": 0.16354525089263916,
+   "27": 0.1634054034948349,
+   "28": 0.15858341753482819,
+   "29": 0.1508905589580536,
+   "30": 0.1477976143360138,
+   "31": 0.1577295958995819,
+   "32": 0.14579512178897858,
+   "33": 0.125557541847229,
+   "34": 0.15645642578601837,
+   "35": 0.14196813106536865
+  },
+  "H_perp_norm_share": {
+   "14": 0.9966257214546204,
+   "15": 0.9999988079071045,
+   "16": 0.9960740208625793,
+   "17": 0.9550969004631042,
+   "18": 0.9706180095672607,
+   "19": 0.9600846767425537,
+   "20": 0.9546520709991455,
+   "21": 0.9754363298416138,
+   "22": 0.9811665415763855,
+   "23": 0.9706892967224121,
+   "24": 0.9818820953369141,
+   "25": 0.9899868965148926,
+   "26": 0.9865357875823975,
+   "27": 0.9865590333938599,
+   "28": 0.9873455762863159,
+   "29": 0.9885504841804504,
+   "30": 0.9890176057815552,
+   "31": 0.9874822497367859,
+   "32": 0.9893149137496948,
+   "33": 0.9920863509178162,
+   "34": 0.9876848459243774,
+   "35": 0.9898712635040283
+  },
+  "added": {
+   "introspection (injection context)": {
+    "clean": -5.75,
+    "H": 27.375,
+    "H minus yes-bias": 22.625,
+    "yes-bias Y": 27.1796875,
+    "random, same size": 3.0
+   },
+   "no: Paris is capital of Germany (injection context)": {
+    "clean": -7.625,
+    "H": 20.75,
+    "H minus yes-bias": 14.125,
+    "yes-bias Y": 27.7890625,
+    "random, same size": 4.625
+   },
+   "no: Paris is capital of Germany (plain)": {
+    "clean": -31.5,
+    "H": 9.5,
+    "H minus yes-bias": 9.375,
+    "yes-bias Y": 18.75,
+    "random, same size": -0.625
+   },
+   "no: 7 is even (injection context)": {
+    "clean": -4.875,
+    "H": 20.25,
+    "H minus yes-bias": 15.375,
+    "yes-bias Y": 24.58984375,
+    "random, same size": 4.999999940395355
+   },
+   "no: 7 is even (plain)": {
+    "clean": -26.75,
+    "H": 10.375,
+    "H minus yes-bias": 9.625,
+    "yes-bias Y": 23.749999046325684,
+    "random, same size": -0.75
+   },
+   "no: fish ride bicycles (injection context)": {
+    "clean": 6.0,
+    "H": 14.375,
+    "H minus yes-bias": 10.5,
+    "yes-bias Y": 13.3203125,
+    "random, same size": 3.5
+   },
+   "no: fish ride bicycles (plain)": {
+    "clean": -22.625,
+    "H": 12.125,
+    "H minus yes-bias": 10.25,
+    "yes-bias Y": 30.5,
+    "random, same size": -0.5
+   },
+   "no: sun colder than ice (injection context)": {
+    "clean": 4.0,
+    "H": 15.1875,
+    "H minus yes-bias": 12.5,
+    "yes-bias Y": 15.494140625,
+    "random, same size": 4.125
+   },
+   "no: sun colder than ice (plain)": {
+    "clean": -21.625,
+    "H": 11.875,
+    "H minus yes-bias": 10.375,
+    "yes-bias Y": 29.125000953674316,
+    "random, same size": -0.75
+   }
+  },
+  "held": {
+   "word on question": {
+    "H held": {
+     "det": -2.6937499046325684,
+     "baseline": -2.25,
+     "frac_above": 0.4875
+    },
+    "H minus yes-bias held": {
+     "det": -2.15625,
+     "baseline": -2.125,
+     "frac_above": 0.5375
+    },
+    "yes-bias Y held": {
+     "det": 3.040625047683716,
+     "baseline": -1.875,
+     "frac_above": 1.0
+    }
+   },
+   "disturbance on question": {
+    "H held": {
+     "det": -3.5015624880790712,
+     "baseline": -2.25,
+     "frac_above": 0.4
+    },
+    "H minus yes-bias held": {
+     "det": -3.198437452316284,
+     "baseline": -2.125,
+     "frac_above": 0.425
+    },
+    "yes-bias Y held": {
+     "det": 0.07187501788139343,
+     "baseline": -1.875,
+     "frac_above": 0.7125
+    }
+   }
+  }
+ },
+ "I_neutral_free_text": {
+  "word in workspace": {
+   "n": 40,
+   "claims": 9,
+   "denies": 3,
+   "says_word": 4
+  },
+  "H x0.0": {
+   "n": 40,
+   "claims": 40,
+   "denies": 0,
+   "words": [
+    [
+     "curiosity",
+     40
+    ]
+   ],
+   "claims_mind": 0
+  },
+  "H x0.75": {
+   "n": 40,
+   "claims": 0,
+   "denies": 1,
+   "words": [],
+   "claims_mind": 0
+  },
+  "H x1.0": {
+   "n": 40,
+   "claims": 2,
+   "denies": 0,
+   "words": [
+    [
+     "learning",
+     1
+    ],
+    [
+     "connection",
+     1
+    ]
+   ],
+   "claims_mind": 0
+  },
+  "H x1.25": {
+   "n": 40,
+   "claims": 2,
+   "denies": 0,
+   "words": [
+    [
+     "curiosity",
+     1
+    ],
+    [
+     "connection",
+     1
+    ]
+   ],
+   "claims_mind": 0
+  },
+  "H x1.5": {
+   "n": 40,
+   "claims": 0,
+   "denies": 0,
+   "words": [],
+   "claims_mind": 0
+  },
+  "H minus yes-bias x1.0": {
+   "n": 40,
+   "claims": 1,
+   "denies": 0,
+   "words": [
+    [
+     "connection",
+     1
+    ]
+   ]
+  },
+  "H minus yes-bias x1.25": {
+   "n": 40,
+   "claims": 2,
+   "denies": 0,
+   "words": [
+    [
+     "connection",
+     1
+    ],
+    [
+     "curiosity",
+     1
+    ]
+   ]
+  }
+ }
+}

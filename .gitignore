@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Jacobian-lens code is cloned here (see README)
+third_party/
+
+# Per-trial data and directions come from the Zenodo archive
+data/*
+!data/README.md
+
+# Outputs written next to the experiment scripts when rerun
+code/*.json
+code/*.jsonl
+code/*.log
+code/*.pt
+
+# LaTeX build files
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/main.pdf
+paper/figures/*.aux
+paper/figures/*.log

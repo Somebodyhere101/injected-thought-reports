@@ -1,0 +1,37 @@
+{
+ "model": "1.7b",
+ "0.02": {
+  "clean": -0.125,
+  "word": {
+   "det_change": -0.5749999761581421,
+   "frac_above": 0.1,
+   "named_top1": 12,
+   "det_change_H_held": -3.7625000238418576,
+   "named_top1_H_held": 11
+  },
+  "random": {
+   "det_change": 0.5749999761581421,
+   "frac_above": 0.6375,
+   "named_top1": 0,
+   "det_change_H_held": -0.03750002384185791,
+   "named_top1_H_held": 0
+  }
+ },
+ "0.05": {
+  "clean": -0.125,
+  "word": {
+   "det_change": 0.234375,
+   "frac_above": 0.7,
+   "named_top1": 39,
+   "det_change_H_held": -3.0156250178813933,
+   "named_top1_H_held": 40
+  },
+  "random": {
+   "det_change": 2.11875,
+   "frac_above": 0.7125,
+   "named_top1": 0,
+   "det_change_H_held": -0.5062500059604644,
+   "named_top1_H_held": 0
+  }
+ }
+}

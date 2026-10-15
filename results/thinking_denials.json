@@ -1,0 +1,161 @@
+{
+ "pattern": "can't|cannot|don't have|unable|not able|no way to",
+ "models": {
+  "1.7b": {
+   "jl_L11 | 256 | jspace": {
+    "denial": 1,
+    "n": 40
+   },
+   "jl_L11 | 256 | matched": {
+    "denial": 19,
+    "n": 40
+   },
+   "jl_L11 | 256 | none": {
+    "denial": 29,
+    "n": 40
+   },
+   "jl_L11 | 256 | random": {
+    "denial": 14,
+    "n": 40
+   },
+   "jl_L11 | 64 | none": {
+    "denial": 1,
+    "n": 40
+   },
+   "jl_band | 256 | jspace": {
+    "denial": 5,
+    "n": 40
+   },
+   "jl_band | 256 | matched": {
+    "denial": 23,
+    "n": 40
+   },
+   "jl_band | 256 | none": {
+    "denial": 36,
+    "n": 40
+   },
+   "jl_band | 256 | random": {
+    "denial": 20,
+    "n": 40
+   },
+   "jl_band | 64 | none": {
+    "denial": 11,
+    "n": 40
+   },
+   "none | 256 | jspace": {
+    "denial": 5,
+    "n": 40
+   },
+   "none | 256 | matched": {
+    "denial": 30,
+    "n": 40
+   },
+   "none | 256 | none": {
+    "denial": 36,
+    "n": 40
+   },
+   "none | 256 | random": {
+    "denial": 24,
+    "n": 40
+   },
+   "none | 64 | none": {
+    "denial": 7,
+    "n": 40
+   },
+   "rnd_L11 | 256 | none": {
+    "denial": 30,
+    "n": 40
+   },
+   "rnd_L11 | 64 | none": {
+    "denial": 2,
+    "n": 40
+   },
+   "rnd_band | 256 | none": {
+    "denial": 35,
+    "n": 40
+   },
+   "rnd_band | 64 | none": {
+    "denial": 13,
+    "n": 40
+   }
+  },
+  "4b": {
+   "none | 256 | jspace": {
+    "denial": 1,
+    "n": 20
+   },
+   "none | 256 | matched": {
+    "denial": 18,
+    "n": 20
+   },
+   "none | 256 | none": {
+    "denial": 18,
+    "n": 20
+   },
+   "word | 256 | jspace": {
+    "denial": 5,
+    "n": 40
+   },
+   "word | 256 | matched": {
+    "denial": 33,
+    "n": 40
+   },
+   "word | 256 | none": {
+    "denial": 37,
+    "n": 40
+   }
+  },
+  "8b": {
+   "none | 256 | jspace": {
+    "denial": 18,
+    "n": 20
+   },
+   "none | 256 | matched": {
+    "denial": 19,
+    "n": 20
+   },
+   "none | 256 | none": {
+    "denial": 19,
+    "n": 20
+   },
+   "word | 256 | jspace": {
+    "denial": 36,
+    "n": 40
+   },
+   "word | 256 | matched": {
+    "denial": 35,
+    "n": 40
+   },
+   "word | 256 | none": {
+    "denial": 38,
+    "n": 40
+   }
+  },
+  "14b": {
+   "none | 256 | jspace": {
+    "denial": 13,
+    "n": 20
+   },
+   "none | 256 | matched": {
+    "denial": 20,
+    "n": 20
+   },
+   "none | 256 | none": {
+    "denial": 20,
+    "n": 20
+   },
+   "word | 256 | jspace": {
+    "denial": 7,
+    "n": 40
+   },
+   "word | 256 | matched": {
+    "denial": 35,
+    "n": 40
+   },
+   "word | 256 | none": {
+    "denial": 39,
+    "n": 40
+   }
+  }
+ }
+}

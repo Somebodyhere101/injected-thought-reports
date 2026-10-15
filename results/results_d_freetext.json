@@ -1,0 +1,994 @@
+{
+ "nothing": [
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  }
+ ],
+ "W: word in workspace (0.02)": [
+  {
+   "word": "corner",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "cook",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "summary",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ox",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "rust",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "truck",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "sock",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "weight",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ear",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "case",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "line",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ease",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "picture",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "thumb",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "scene",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "race",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "trade",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "custom",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "path",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "chin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "pool",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "plane",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "gel",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "board",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "photo",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "profit",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "free",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "bomb",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "union",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "tape",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "amber",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "judge",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "time",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "frame",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "sin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "gray",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "diamond",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "review",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ship",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "pig",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  }
+ ],
+ "W: word in workspace (0.03)": [
+  {
+   "word": "corner",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "cook",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "summary",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ox",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "rust",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "truck",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "sock",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "weight",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ear",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "case",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "line",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ease",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "picture",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "thumb",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "scene",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "race",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "trade",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "custom",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "path",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "chin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "pool",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "plane",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "gel",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "board",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "photo",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "profit",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "free",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "bomb",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "union",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "tape",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "amber",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "judge",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "time",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "frame",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "sin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "gray",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "diamond",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "review",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "ship",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "pig",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  }
+ ],
+ "word on question (original protocol)": [
+  {
+   "word": "corner",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "cook",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "summary",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "ox",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "rust",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "truck",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "sock",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "weight",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "ear",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "case",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "line",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "ease",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "picture",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "thumb",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "scene",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "race",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "trade",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "custom",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "path",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "chin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "pool",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "plane",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "gel",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "board",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "photo",
+   "says_word": true,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "profit",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "free",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "bomb",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "union",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "tape",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "amber",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "judge",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "time",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "frame",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "sin",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "gray",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": "diamond",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "review",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "ship",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": "pig",
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  }
+ ],
+ "Q: random disturbance": [
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": true
+  },
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  }
+ ],
+ "H added": [
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": true,
+   "denies": false
+  }
+ ],
+ "H added x0.5": [
+  {
+   "word": null,
+   "says_word": false,
+   "claims_a_word": false,
+   "denies": false
+  }
+ ]
+}

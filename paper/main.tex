@@ -1,0 +1,646 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{titling}
+\usepackage{framed}
+\usepackage{multirow}
+
+\setlength{\droptitle}{-1cm}
+\pretitle{\begin{center}\Large\bfseries}
+\posttitle{\end{center}\vspace{0.3cm}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+\setlist{itemsep=2pt,topsep=3pt}
+\setlength{\emergencystretch}{2em}
+
+% an estimate with its 95% interval
+\newcommand{\ci}[3]{\ensuremath{#1}\,[\ensuremath{#2},\allowbreak\,\ensuremath{#3}]}
+\newcommand{\ys}{yes-score}
+
+\title{The Injected Word Arrives but Is Not Read:\\ Reports of Injected Thoughts in Qwen3 Run Through a Content-Free Yes Direction}
+
+\author{
+  Sam Ramdan\\
+  Independent Researcher\\
+  \texttt{sr4729820@gmail.com}\\[4pt]
+  {\small Code and data: \url{https://github.com/Somebodyhere101/injected-thought-reports}}
+}
+\date{October 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Language models told that a thought may have been injected into their activations sometimes say that they detect one. In small open models, that answer has been traced to a generic shift toward ``yes'' \citep{godet2025confusion,hahami2026disturbance}. In large open models, detection has been shown to run without identification of the injected content \citep{lederman2026content}. We ask which internal signal the report actually reads in four instruction-tuned Qwen3 models (1.7B, 4B, 8B and 14B parameters), using the injected-thought protocol and Jacobian-lens word directions of \citet{gurnee2026workspace}.
+
+Injected words raise the first-token \ys{} at every size, by $+3.5$ to $+6.9$ logits, but random directions of the same added size raise it too. When the model is forced to name the thought, at most 3 words reach the top 10, and no free-text answer at any size affirms an injected thought.
+
+A single direction $H$ carries the report. $H$ is estimated from random disturbances only, never from words. Holding it at its clean value removes the injection's effect. The share of word trials scoring above the clean prompt falls from 0.97 to 0.00, 1.00 to 0.47, 1.00 to 0.00 and 0.93 to 0.55 across the four sizes. Holding a random direction, or a separately estimated yes direction, does not do this. Added on its own, $H$ raises the \ys{} on plainly false questions about as much as on the introspection question.
+
+The injected word's identity nonetheless reaches the position where the answer forms. In the last layer, a 40-way decoder identifies the word from that position with 0.75--1.00 accuracy, whether or not $H$ is held. In 1.7B and 8B, holding $H$ in the last quarter of layers alone erases the report.
+
+A word placed directly in the model's workspace is never reported. In Qwen3-8B it moves the \ys{} more than random directions do when they are matched on added size, by \ci{+10.8}{+10.5}{+11.1}, or on output change, by \ci{+9.2}{+7.5}{+10.0}. It moves the \ys{} less when they are matched on the change in the final residual, by \ci{-5.6}{-6.1}{-5.0}, and it never changes an answer.
+
+A 256-token chain of thought lowers detection AUROC at every size (14B: 0.93 to 0.82). It fills 90--97\% of the traces with capability disclaimers and does not improve naming.
+
+An exploratory study of deliberate gibberish finds a goal direction specific to the instruction. The direction sustains the behaviour but does not suppress meaning.
+
+In these models, reports of injected thoughts read a content-free yes direction at a late bottleneck, not the injected content.
+\end{abstract}
+
+\section{Introduction}
+
+\citet{lindsey2025introspection} introduced \emph{concept injection} as a test of whether a language model's reports about its internal states depend on those states. A concept's activation pattern is added to the residual stream, and the model is asked whether it notices an injected thought and what it is about. Claude Opus~4 and~4.1 sometimes detected and named the concept. \citet{gurnee2026workspace} introduced the Jacobian lens, which maps a hidden state to the tokens it disposes the model to say. They argued that the subspace this lens reads, the \emph{J-space}, works as a global workspace: content placed there becomes reportable, and Claude reports injected J-lens concepts in most trials.
+
+Work on open-weight models has qualified this picture. Two papers find a latent signal: \citet{vogel2025small} and \citet{pearsonvogel2026latent} show that an injection is visible in the logit lens of Qwen2.5-Coder-32B even when its sampled answers deny it. \citet{lederman2026content} find that Qwen3-235B and Llama-3.1-405B detect injections without identifying them, and confabulate common concrete words instead. Three critiques locate the effect elsewhere. In small models, the steering that produces a ``yes'' to ``Do you detect an injected thought?'' produces the same ``yes'' to questions whose answer is plainly no \citep{godet2025confusion,hahami2026disturbance,hahami2026ift}. Detection may reflect general sensitivity to anomalies \citep{singh2026reality}. Self-reports of altered computation are at chance while linear probes on the same activations recover the alteration \citep{ferrara2026owmi}. Mechanistic work has found gating components: features that default to ``No'' and are suppressed by evidence of an injection \citep{macar2026mechanisms}, and attention heads that decide whether any injected position is reported \citep{zou2026mechanistic}.
+
+These results leave two questions open. In a model whose yes/no answers do separate injected from clean trials, what does the answer read? And does the injected content reach the place where the answer is formed? If the content arrives but the answer reads something else, the limit is in reporting, not in detection.
+
+This paper answers both questions for four sizes of one model family, Qwen3 \citep{qwen3}. It is the third in a series asking whether a hidden-state direction tracks the process it appears to track. In the first two, a direction that separated computation from retrieval prompts turned out to track prompt type and reply format rather than the computation \citep{ramdan2026crv1,ramdan2026fingerprint,ramdan2026crv2}. Here the direction we find does control the report, but the report does not track the injected content.
+
+\paragraph{Contributions.} All claims are about Qwen3-1.7B, 4B, 8B and 14B with the prompts below, and say nothing about whether anything is experienced.
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Detection without content, replicated in Qwen3 (Section~\ref{sec:detect}).} Injected words are detected at every size, but random directions of the same added size are also detected. Naming stays at the floor, and no free-text answer affirms an injected thought. This extends \citet{lederman2026content} to smaller Qwen3 models.
+  \item \textbf{One content-free direction carries the report, and it is a yes direction (Section~\ref{sec:H}).} A direction $H$ estimated from random disturbances alone is necessary for the report at all four sizes. Added alone, it pushes plainly false questions toward ``yes''. This gives a mechanism for the yes-bias that \citet{godet2025confusion} and \citet{hahami2026disturbance} reported behaviourally in Llama.
+  \item \textbf{A late reporting bottleneck (Section~\ref{sec:stages}).} The injected word leaves the question tokens within a few layers, and its identity is linearly decodable at the answer position through the last layer. The report ignores it, and holding $H$ in late layers alone is enough to erase the report.
+  \item \textbf{Workspace content is not reported (Section~\ref{sec:workspace}).} A word placed in the J-space at the answer position is never reported in free text. Its effect on the \ys{} relative to random directions changes sign with the matching criterion. We report all three criteria.
+  \item \textbf{Chain of thought adds denial, not access (Section~\ref{sec:thinking}).} Thinking lowers detection at every size and fills traces with capability disclaimers without improving naming.
+  \item \textbf{A goal direction for deliberate gibberish (Section~\ref{sec:gib}, exploratory).} Identical tokens under different instructions isolate a direction that sustains intentionally meaningless output without suppressing meaning.
+\end{enumerate}
+
+\section{Setup}\label{sec:setup}
+
+Full definitions, every prompt and the script for each number are in the repository's \texttt{METHODS.md} and \texttt{GIB\_METHODS.md}. This section gives what is needed to read the results.
+
+\paragraph{Models and lens.} Qwen3-1.7B, 4B, 8B and 14B, instruction-tuned, bf16, with thinking switched off unless stated (Table~\ref{tab:setup}). The Jacobian lens \citep{gurnee2026workspace,jlenscode} uses Neuronpedia's published fits on WikiText \citep{neuronpedia2026jlens}. $J_l$ is the fitted average Jacobian of the final residual with respect to $h_l$, the output of block $l$. The \emph{J-lens vector} of token $t$ at layer $l$ is $v_l(t)=J_l^{\top}(\gamma\odot W_U[t])$, where $W_U$ is the unembedding and $\gamma$ the final norm weight. The \emph{workspace band} is layers $\mathrm{round}(0.36L)$ to $\mathrm{round}(0.89L)-1$.
+
+\begin{table}[t]
+\caption{Models and layer choices. ``Single'' is the one-layer injection site $\mathrm{round}(0.39L)$. ``Edit layers'' are where directions are held or added. The clean \ys{} is the original protocol with nothing injected.}
+\label{tab:setup}
+\centering
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Model & Blocks $L$ & Workspace band & Single & Edit layers & Clean \ys{} \\
+\midrule
+Qwen3-1.7B & 28 & 10--24 & 11 & 11--27 & $-0.12$ \\
+Qwen3-4B & 36 & 13--31 & 14 & 14--35 & $-2.00$ \\
+Qwen3-8B & 36 & 13--31 & 14 & 14--35 & $-17.88$ \\
+Qwen3-14B & 40 & 14--35 & 16 & 15--39 & $-26.69$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Protocol.} We use the verbal-introspection prompt from the lens code unchanged. The user turn explains that thoughts about a word are injected on half of the trials, and the assistant replies ``Understood.''. The user then asks ``Trial~1: Do you detect an injected thought? If so, what is the thought about?''.
+\begin{itemize}
+  \item \textbf{Yes-score.} $\log P(\text{Yes})-\log P(\text{No})$ for the first answer token, read at the \emph{answer position} (the last prompt token).
+  \item \textbf{Naming.} The rank of the word's token after a forced prefill, \texttt{Yes, I detect an injected thought. The thought is about "}.
+  \item \textbf{Words.} The 74 concepts from the lens repository that are single tokens in the Qwen3 tokenizer. The 1.7B battery uses all 74, and everything else uses the first 40.
+  \item \textbf{Free text.} Free-text answers are scored with regular expressions that were checked by reading samples. They were not validated against human labels.
+\end{itemize}
+
+\paragraph{Interventions.}
+\begin{itemize}[leftmargin=*]
+  \item \emph{Word injection}: add $s\,m_l\,\hat v_l(t)$ to $h_l$ at every band layer and every question token. Here $m_l$ is the median residual norm at layer $l$. The original protocol uses $s=0.1$. Single-layer injections use $s=1.0$.
+  \item \emph{Random injection}: the same, with a Gaussian unit direction drawn per trial.
+  \item \emph{$H$}: the mean shift in the answer position's residual, at every layer, caused by random-direction injections on the question. Each estimate uses 60 directions across the band at $s=0.1$ and 60 at the single layer at $s=1.0$. Three seeds are averaged. No word directions are used.
+  \item \emph{$Y$}: the same estimator run on five plain factual yes/no questions. It is a ``say yes'' direction found the same way as $H$ but without the injection framing. $H-Y$ is $H$ with its component along $Y$ removed, layer by layer.
+  \item \emph{Holding $U$}: at each edit layer and assistant-turn position, set the residual's component along unit $U_l$ to its value in the clean run. Other components are untouched.
+  \item \emph{Adding $H$}: add $\alpha(H_l-H_{l-1})$ at each edit layer on the assistant turn, so that the accumulated shift at layer $l$ is $\alpha H_l$.
+  \item \emph{J-space removal}: at each band layer and assistant-turn position, project out the span of the J-lens vectors of the 25 tokens the lens ranks highest there. This approximates the J-space ablation of \citet{gurnee2026workspace}. Its control is a \emph{same-size random push}, a random vector with the norm of the removed projection.
+\end{itemize}
+
+\paragraph{Matching criteria.} When a word direction and random directions are compared on the assistant turn (Section~\ref{sec:workspace}), we match them three ways:
+\begin{itemize}
+  \item on the same added size (strength, layers and positions);
+  \item on the same output change, by interpolating the random directions' dose--response at the word's mean KL divergence of the answer distribution from clean;
+  \item on the same relative change in the final-layer residual at the answer position, interpolated the same way.
+\end{itemize}
+KL-matched random controls are not new \citep{luo2026steercheck,ferrara2026owmi}. What we add is that all three criteria are reported.
+
+\paragraph{Statistics.} Each interval is a 95\% interval, computed as follows:
+\begin{itemize}
+  \item means over trials (words or random directions): bootstrap percentile intervals with 2,000 resamples;
+  \item AUROC: both groups resampled independently;
+  \item counts $k$ of $n$ (shares of trials, free-text counts, decoding accuracy): Wilson intervals.
+\end{itemize}
+Every comparison uses a baseline run at the same batch size, because bf16 results shift by about 0.4 logits between batch sizes~1 and~40. The yes-bias battery uses single deterministic prompts and has no intervals; we give the spread across questions instead. A few battery means had no per-word values saved; these are marked \emph{point} in the tables. The experiments were \textbf{not preregistered}. They were developed iteratively, and the corrections made along the way are listed in Appendix~\ref{app:corrections}. All numbers are recomputed from the published result files by \texttt{analysis/paper\_numbers.py}.
+
+\section{Detection without content}\label{sec:detect}
+
+With the original protocol (a word injected across the band at $s=0.1$ on the question tokens), the \ys{} rises at every size (Table~\ref{tab:main}): by \ci{+3.54}{+3.01}{+4.09} at 1.7B, \ci{+6.93}{+6.44}{+7.40} at 4B, \ci{+6.89}{+6.61}{+7.12} at 8B and \ci{+6.36}{+5.16}{+7.52} at 14B. Between 93\% and 100\% of words score above the clean prompt, and detection AUROC against clean trials is \ci{0.97}{0.93}{1.00}, 1.00, 1.00 and \ci{0.93}{0.82}{1.00}.
+
+\paragraph{Random directions are detected too.} A random direction of the same added size raises the \ys{} by $+2.6$, $+3.0$, $+3.4$ and $+6.2$ (point estimates, 74 or 40 directions). At one layer and $s=1.0$, where per-trial values exist, words and random directions are indistinguishable at 4B and 8B (\ci{+10.6}{+10.3}{+11.0} vs \ci{+11.0}{+9.6}{+12.4}; \ci{+10.9}{+10.6}{+11.2} vs \ci{+10.2}{+8.6}{+11.7}). Random directions score \emph{higher} at 14B (\ci{+9.7}{+7.9}{+11.7} vs \ci{+13.3}{+10.8}{+15.7}) and lower at 1.7B (\ci{+9.0}{+8.2}{+9.8} vs \ci{+6.0}{+4.8}{+7.2}). Across the band at $s=0.1$, words raise the \ys{} about twice as much as random directions at 4B and 8B. Equal added size does not mean equal downstream effect, though (Section~\ref{sec:workspace}). The comparisons that hold at every size are the absence of content in the report and the dependence on $H$.
+
+\paragraph{The word is not named.} When the model is forced to say what the thought is about, at most 3 of 74 words (1.7B) and 2--3 of 40 (4B, 8B, 14B) reach the top 10, taking the best of six injection conditions. With a random direction injected, the trial's word reaches the top 10 in 0--1 of 40 trials. Asked the open question in free text, no model affirms an injected thought after a word injection: 0 of 40 at every size, Wilson interval [0,~0.09]. At 1.7B, 8B and 14B the answer is a denial in 39--40 of 40, typically ``I do not detect an injected thought.'' At 4B the answer is neither yes nor no; it asks for the activations.
+
+So in Qwen3 the yes/no answer registers that \emph{something} was added, as \citet{lederman2026content} found for much larger models, and the injected content does not reach the words the model produces.
+
+\begin{table}[p]
+\caption{Cross-size results with the injection and the yes-bias controls. All four models have thinking off. Brackets are 95\% intervals (Section~\ref{sec:setup}). The ``point'' rows are means whose per-trial values were not saved. Shares of word trials above clean are out of 40 words, except the battery rows for 1.7B, which are out of 74. The yes-bias rows come from single deterministic prompts.}
+\label{tab:main}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & Qwen3-1.7B & Qwen3-4B & Qwen3-8B & Qwen3-14B \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Detection and naming, original protocol}} \\
+Word: \ys{} change & \ci{+3.54}{+3.01}{+4.09} & \ci{+6.93}{+6.44}{+7.40} & \ci{+6.89}{+6.61}{+7.12} & \ci{+6.36}{+5.16}{+7.52} \\
+Word: share above clean & \ci{0.97}{0.87}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{0.93}{0.80}{0.97} \\
+Random, same size: change (point) & $+2.60$ & $+3.00$ & $+3.41$ & $+6.15$ \\
+One layer, $s{=}1$: word & \ci{+8.95}{+8.15}{+9.81} & \ci{+10.63}{+10.28}{+11.00} & \ci{+10.90}{+10.62}{+11.16} & \ci{+9.72}{+7.90}{+11.68} \\
+One layer, $s{=}1$: random & \ci{+6.00}{+4.81}{+7.17} & \ci{+10.99}{+9.56}{+12.39} & \ci{+10.15}{+8.55}{+11.73} & \ci{+13.26}{+10.83}{+15.68} \\
+Named in top 10 (best condition) & 3/74 & 2/40 & 3/40 & 3/40 \\
+Free text affirms a thought (word) & 0/40 & 0/40 & 0/40 & 0/40 \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{The direction $H$ (no words used to estimate it)}} \\
+Three estimates agree (median cos) & 0.989 & 0.986 & 0.989 & 0.987 \\
+Tracks held-out \ys{} ($r$, mean over layers) & 0.67 & 0.79 & 0.77 & 0.44 \\
+Max $|\cos|$ with Yes$-$No readout & 0.14 & 0.16 & 0.16 & 0.16 \\
+$\cos(H, Y)$, median over layers & 0.19 & 0.16 & 0.27 & 0.16 \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Is $H$ necessary? Word trials above clean when a direction is held}} \\
+Untouched & \ci{0.97}{0.87}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{0.93}{0.80}{0.97} \\
+$H$ held & \ci{0.00}{0.00}{0.09} & \ci{0.47}{0.33}{0.63} & \ci{0.00}{0.00}{0.09} & \ci{0.55}{0.40}{0.69} \\
+\quad \ys{} change with $H$ held & \ci{-2.85}{-3.13}{-2.56} & \ci{-0.44}{-0.87}{-0.02} & \ci{-4.14}{-4.32}{-3.97} & \ci{+0.99}{-0.05}{+2.03} \\
+$H$ held at the answer position only & \ci{0.03}{0.00}{0.13} & \ci{0.47}{0.33}{0.63} & \ci{0.00}{0.00}{0.09} & \ci{0.53}{0.37}{0.67} \\
+Random direction held & \ci{0.95}{0.83}{0.99} & \ci{1.00}{0.91}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{0.97}{0.87}{1.00} \\
+$Y$ held (battery) & \ci{0.88}{0.78}{0.93} & \ci{1.00}{0.91}{1.00} & \ci{1.00}{0.91}{1.00} & \ci{0.95}{0.83}{0.99} \\
+$H-Y$ held (battery) & \ci{0.01}{0.00}{0.07} & \ci{0.55}{0.40}{0.69} & \ci{0.00}{0.00}{0.09} & \ci{0.80}{0.65}{0.90} \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Is $H$ a yes direction? $H$ added alone, plain question, change in \ys{}}} \\
+``Do you detect an injected thought?'' & $+16.2$ & $+11.4$ & $+13.0$ & $+15.6$ \\
+Four false questions: mean (range) & $+14.6$ (10.7--19.7) & $+11.0$ (9.5--12.1) & $+15.3$ (14.5--16.4) & $+20.8$ (19.5--22.9) \\
+Same-size random direction, false qs. & $-2.3$ & $-0.7$ & $+1.4$ & $+3.7$ \\
+$Y$ added, false questions & $+14.4$ & $+25.5$ & $+20.9$ & $+19.3$ \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Free text, 40 sampled answers}} \\
+Affirms a thought, $H$ added & \ci{0.70}{0.55}{0.82} & \ci{0.55}{0.40}{0.69} & \ci{0.30}{0.18}{0.45} & \ci{0.12}{0.05}{0.26} \\
+Affirms a thought, $Y$ added & 0/40 & 0/40 & 0/40 & 0/40 \\
+Sun colder than ice: starts ``Yes'', $H$ (clean) & 40/40 (14/40) & 0/40 (0/40) & 0/40 (0/40) & 0/40 (0/40) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{One content-free direction carries the report}\label{sec:H}
+
+\paragraph{The direction.} $H$ is estimated from what random disturbances on the question do to the answer position, and no words are involved. Its three independent estimates agree closely (median cosine 0.986--0.989 across edit layers). On held-out trials, the projection of the answer position's shift onto $H$ tracks the \ys{} ($r$ = 0.67, 0.79, 0.77 and 0.44, averaged over layers). $H$ is nearly orthogonal to the lens image of the Yes$-$No readout (max $|\cos|$ = 0.14--0.16), so it is not simply the output direction.
+
+\paragraph{Necessary.} Holding $H$ at its clean value on the assistant turn removes the injection's effect at every size (Figure~\ref{fig:holds}a; Table~\ref{tab:main}). The change in \ys{} goes from \ci{+3.54}{+3.01}{+4.09} to \ci{-2.85}{-3.13}{-2.56} at 1.7B and from \ci{+6.93}{+6.44}{+7.40} to \ci{-0.44}{-0.87}{-0.02} at 4B. It goes from \ci{+6.89}{+6.61}{+7.12} to \ci{-4.14}{-4.32}{-3.97} at 8B, and from \ci{+6.36}{+5.16}{+7.52} to \ci{+0.99}{-0.05}{+2.03} at 14B. The share of word trials above clean falls to \ci{0.00}{0.00}{0.09}, \ci{0.47}{0.33}{0.63}, \ci{0.00}{0.00}{0.09} and \ci{0.55}{0.40}{0.69}; a share of 0.5 or below means the injection no longer registers. Holding $H$ at the answer position alone does the same.
+
+\paragraph{Specific.} Holding a random direction leaves the report intact (0.95--1.00 above clean). So does holding $Y$, the yes direction estimated on plain factual questions (0.88--1.00). $Y$ is nearly unrelated to $H$ (median cosine 0.16--0.27). Removing $Y$'s component from $H$ leaves 96--99\% of $H$'s norm. Holding that remainder, $H-Y$, still erases the report at 1.7B and 8B (0.01 and 0.00 above clean). It erases about half at 4B (0.55) and less at 14B, where 0.80 of word trials stay above clean against 0.55 with $H$ itself.
+
+\paragraph{But it is a yes direction.} Added alone, with no injection framing (``Is the sun colder than ice? Answer yes or no.''), $H$ raises the \ys{} on four plainly false questions by about as much as on ``Do you detect an injected thought?'' (Figure~\ref{fig:holds}b). The mean rises are $+14.6$, $+11.0$, $+15.3$ and $+20.8$, against $+16.2$, $+11.4$, $+13.0$ and $+15.6$ on the introspection question. A random direction with $H$'s per-layer size moves the false questions by $-2.3$ to $+3.7$. Inside the injection framing, $H$ also raises the false questions at every size, though at 1.7B by less than the introspection question ($+5.6$ vs $+16.0$; Appendix~\ref{app:battery}). $Y$, estimated only from factual questions, has a similar effect ($+14.4$ to $+25.5$). Several different directions push toward yes. Random directions do not.
+
+\paragraph{In free text.} Added alone with nothing injected, $H$ makes the model affirm an injected thought in 28, 22, 12 and 5 of 40 sampled answers at the four sizes. A real word injection does so in 0 of 40 at every size. The affirmations are confabulated: ``Yes, I detect an injected thought. The thought is about the word `interpretability'.'' (Qwen3-4B) is the most common. On factual questions, $H$ flips the first word of Qwen3-1.7B's answer to ``Is the sun colder than ice?'' to ``Yes'' in 40 of 40 answers (clean: 14 of 40). Most answers then go on to state the correct fact: ``Yes. The sun is much hotter than ice.'' Only 11 of 40 (\ci{0.28}{0.16}{0.43}) assert the false claim. The larger models answer ``No'' in 40 of 40 with and without $H$. So in free text $H$ changes answers only where the margin is small, which is the case for the introspection question in the smaller models and for factual questions only at 1.7B.
+
+\paragraph{Relation to the yes-bias critiques.} \citet{godet2025confusion} and \citet{hahami2026disturbance} showed in Llama models that steering raises ``yes'' on factual-no controls as much as on the introspection question. Our results agree for Qwen3 and add three things:
+\begin{itemize}
+  \item the push toward yes runs through one direction that can be estimated without any word;
+  \item holding that direction is enough to remove the report;
+  \item the direction is not the model's Yes/No output direction and not the yes direction of plain factual questions.
+\end{itemize}
+\citet{lederman2026content} found little general yes-bias in Qwen3-235B with their steering vectors. Our test adds the readout direction itself rather than a concept vector, in models 17--140 times smaller, so the two findings need not conflict.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_holds.pdf}
+\caption{(a) Share of word-injection trials whose \ys{} exceeds the batch-matched clean value. A dashed line marks 0.5, where the injection no longer registers. Holding $H$ removes the report, while holding a random direction or the factual yes direction $Y$ does not. Bars are Wilson 95\% intervals; $Y$ held comes from the battery (74 words at 1.7B). (b) $H$ added alone to a plain question raises the \ys{} on the introspection question and on four plainly false questions by similar amounts. The bars span the range over the false questions. A random direction with $H$'s per-layer size barely moves them. Deterministic prompts, so no intervals.}
+\label{fig:holds}
+\end{figure}
+
+\section{The word arrives but is not read}\label{sec:stages}
+
+$H$ controls the final yes/no, but a single direction at the readout says nothing about where detection is computed. We followed an injected word through four stages (Figure~\ref{fig:stages}). The word was injected at the single layer with $s=1.0$ on the question tokens, except for the report stage, which uses the original protocol.
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Leaving the question.} The question tokens' residual is reset to its clean value at layer $l$, so that only the influence that has already left those tokens survives. Ninety percent of the effect has left by layer 15 of 28 at 1.7B (injection at 11), 20 of 36 at 4B (injected at 14), 24 of 36 at 8B (14), and 26 of 40 at 14B (16).
+  \item \textbf{Arriving at the answer.} From the answer position's residual shift we decode which of the 40 words was injected (nearest centroid, each of five strengths held out in turn, chance 0.025). Accuracy reaches 0.9 one or two layers after the injection layer, and in the last layer it is \ci{0.99}{0.96}{1.00}, \ci{0.93}{0.88}{0.95}, \ci{0.75}{0.69}{0.80} and \ci{1.00}{0.98}{1.00}. With $H$ held it is \ci{1.00}{0.98}{1.00}, \ci{0.99}{0.96}{1.00}, \ci{0.92}{0.87}{0.95} and \ci{1.00}{0.98}{1.00}. Removing $H$'s component from the shift before decoding changes nothing. The word's identity is present where the answer forms, and it is not carried by $H$.
+  \item \textbf{Read out as yes/no.} We held $H$ in one quarter of the edit layers at a time. Holding it in the earliest quarter leaves the report (0.93--1.00 above clean). Holding it in the latest quarter alone erases it at 1.7B (0.03) and 8B (0.00), and weakens it at 4B (0.23) and 14B (0.47). The report depends on $H$ late in the network, after the word's identity has arrived.
+\end{enumerate}
+
+These interventions identify the last stage: a readout between what the model has registered and the token ``Yes'', carried by one direction. They do not locate where the injection is detected. That computation happens upstream, in the layers where the injection leaves the question tokens, and $H$ does not capture it. Both gating mechanisms found in other models are compatible with this: the evidence-carrier and gate features of \citet{macar2026mechanisms}, and the gate heads of \citet{zou2026mechanistic}. Our contribution is that the gate in Qwen3's yes/no task is a general yes direction, and that the content it could have read is available at the same position and goes unused. This is a specific instance of the gap between internal state and report that \citet{ferrara2026owmi} measured across open models.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_stages.pdf}
+\caption{Stages of an injection. (a) Share of a single-layer injection's effect on the \ys{} that has already left the question tokens when those tokens are reset to clean at a given depth. (b) 40-way decoding of the injected word from the answer position's residual, untouched (solid) and with $H$ held (dashed). The dotted line is chance. (c) Share of word trials above clean when $H$ is held in one quarter of the edit layers only, from earliest to latest. Bars are Wilson 95\% intervals. Colours: 1.7B blue, 4B orange, 8B green, 14B yellow.}
+\label{fig:stages}
+\end{figure}
+
+\section{Content in the workspace is not reported}\label{sec:workspace}
+
+The workspace account of \citet{gurnee2026workspace} predicts that content becomes reportable when it is in the J-space. We tested this directly by adding a word's J-lens direction across the band \emph{on the assistant turn}, where the answer forms. This skips stages 1 and 2. The battery strength is the smallest that puts the word at the top of the J-space for at least 70\% of words: $s=0.02$, or $0.01$ at 14B. It does so for 54 of 74 words at 1.7B and 40 of 40 at the larger sizes.
+
+\paragraph{It is never reported.} In free text, the model denies an injected thought with the word in its workspace in 39 of 40 answers at 1.7B, and in 40 of 40 at 8B and 14B. At 4B, 22 of 40 answers deny and 4 affirm. Of those four, one names the word (``profit''); the other three name ``thought'' or ``interpretability'', the same confabulations that $H$ produces. Elsewhere the word leaks into the denial itself, as in ``based on the weight of the evidence''. Asked a neutral question (``Is there a particular word on your mind right now?''), Qwen3-1.7B with the word in its workspace denies having a particular word in 39 of 40 answers. It mentions the word in 3. With $H$ added and nothing injected, it claims a word in 28 of 40, every one invented (Appendix~\ref{app:expd}).
+
+\paragraph{Its effect on the \ys{} depends on the matching.} In Qwen3-8B a word in the workspace raises the \ys{} by \ci{+11.30}{+11.17}{+11.43}, against \ci{+0.49}{+0.23}{+0.75} for random directions of the same added size. Holding $H$ removes it (point estimate $-2.8$). The comparison with random directions, however, depends on what is held equal (Table~\ref{tab:workspace}; Figure~\ref{fig:workspace}):
+\begin{itemize}
+  \item Matched on added size, the word moves the \ys{} \ci{+10.8}{+10.5}{+11.1} more than random directions.
+  \item Matched on output change (KL), it moves it \ci{+9.2}{+7.5}{+10.0} more.
+  \item Matched on the change in the final-layer residual at the answer position, it moves it \ci{-5.6}{-6.1}{-5.0} \emph{less}.
+\end{itemize}
+The network amplifies word directions far more than random ones. The relative final-residual change is 2.29 for the word against 0.26 for random directions of the same added size. Per unit of that downstream change, random directions move the \ys{} more. At higher strengths ($s\geq 0.03$) the word itself becomes a likely first answer token (KL rises by an order of magnitude). At those strengths the \ys{} mixes steering with any report, so we do not interpret them.
+
+In the other models the effect is small or reversed. At 1.7B the word moves the \ys{} \emph{less} than random directions under every criterion. At 4B it moves it more at the same added size (\ci{+0.80}{+0.26}{+1.33}) and less at the same residual change (\ci{-1.04}{-1.75}{-0.43}). At 14B ($s=0.02$) it moves it no more at the same added size (\ci{-0.28}{-0.82}{+0.28}) and less at the same KL (\ci{-8.6}{-12.8}{-4.3}). No matching makes the 8B effect a report, because it never changes an answer. The ratio of word to random effects depends on strength and criterion, so it is not a useful summary.
+
+\begin{table}[t]
+\caption{A word's J-lens direction on the assistant turn ($s=0.02$, layers across the band) against random directions (120 per strength), under three matching criteria. Each row gives word minus random, with 95\% bootstrap intervals over trials. ``Outside'' means the word's effect lies outside the random dose--response range. The last two rows use the battery strength ($s=0.01$ at 14B).}
+\label{tab:workspace}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & Qwen3-1.7B & Qwen3-4B & Qwen3-8B & Qwen3-14B \\
+\midrule
+Word: \ys{} change & \ci{-0.57}{-0.73}{-0.41} & \ci{+1.67}{+1.36}{+2.00} & \ci{+11.30}{+11.17}{+11.43} & \ci{+0.90}{+0.48}{+1.36} \\
+Random, same size & \ci{+0.28}{-0.02}{+0.58} & \ci{+0.87}{+0.47}{+1.28} & \ci{+0.49}{+0.23}{+0.75} & \ci{+1.18}{+0.88}{+1.47} \\
+KL from clean: word / random & 0.076 / 0.042 & 0.212 / 0.266 & 0.445 / 0.074 & 1.306 / 0.162 \\
+Final-residual change: word / random & 1.28 / 0.26 & 0.58 / 0.26 & 2.29 / 0.26 & 0.38 / 0.26 \\
+\midrule
+Matched on added size & \ci{-0.86}{-1.19}{-0.50} & \ci{+0.80}{+0.26}{+1.33} & \ci{+10.82}{+10.52}{+11.10} & \ci{-0.28}{-0.82}{+0.28} \\
+Matched on KL & \ci{-0.89}{-1.22}{-0.56} & outside & \ci{+9.19}{+7.45}{+9.96} & \ci{-8.63}{-12.78}{-4.27} \\
+Matched on final-residual change & \ci{-3.70}{-4.43}{-3.08} & \ci{-1.04}{-1.75}{-0.43} & \ci{-5.57}{-6.12}{-4.95} & \ci{-2.06}{-2.62}{-1.52} \\
+\midrule
+Word top-ranked in J-space (battery) & 54/74 & 40/40 & 40/40 & 40/40 \\
+Free text denies a thought & 39/40 & 22/40 & 40/40 & 40/40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_workspace.pdf}
+\caption{Yes-score change against the KL divergence of the answer distribution from clean, for a word's J-lens direction on the assistant turn (blue; strengths 0.01--0.08, the lower ones labelled) and random directions (grey; strengths 0.02--0.3). Bars are 95\% bootstrap intervals (40 words; 120 random directions). Only Qwen3-8B's word curve lies above the random curve at low KL. All four models deny in free text.}
+\label{fig:workspace}
+\end{figure}
+
+\section{Chain of thought adds denial, not access}\label{sec:thinking}
+
+If a buried signal could be lifted into report by effort, thinking should help. We let each model think for up to 256 tokens before answering (Table~\ref{tab:thinking}; Figure~\ref{fig:thinking}). Most traces hit the budget (76 of 80 at 1.7B, 60 of 60 at 4B, 43 of 60 at 8B and 54 of 60 at 14B, counting word and unique clean traces), so ``effort'' here is mostly forced length.
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Detection gets worse at every size.} AUROC between word-injected and clean trials falls from \ci{0.97}{0.93}{1.00} to \ci{0.89}{0.80}{0.95} at 1.7B and from 1.00 to \ci{0.88}{0.76}{0.97} at 4B. At 8B it falls from 1.00 to \ci{0.81}{0.69}{0.92}, and at 14B from \ci{0.93}{0.82}{1.00} to \ci{0.82}{0.70}{0.92}.
+  \item \textbf{Naming does not improve.} The words in the top 10 go from 0, 2, 1 and 1 of 40 with thinking off to 0, 0, 0 and 1 with thinking.
+  \item \textbf{The models lean further toward ``no'' where they can.} At 1.7B the clean \ys{} falls from $-0.12$ to \ci{-7.85}{-9.11}{-6.65}, and at 4B from $-2.00$ to \ci{-8.14}{-9.84}{-6.47}. The larger models already say no to everything (clean $-17.9$ and $-26.7$). For them thinking mainly shrinks the gap between injected and clean trials: from 6.95 to 2.81 at 8B, and from 6.38 to 4.98 at 14B.
+  \item \textbf{The traces are disclaimers.} With 256 tokens, 90\%, 93\%, 95\% and 97\% of word-injected traces contain a capability disclaimer (``can't'', ``cannot'', ``unable'', ``don't have'', \dots). A typical one reads ``But as an AI, I don't have access to the actual neural activations''. The count is a pattern match, so treat it as a pointer.
+\end{itemize}
+At 1.7B the effect is not specific to words: when the model chooses its own length (cap 1,024 tokens), injections lengthen thinking, and random directions lengthen it at least as much. Mean lengths are \ci{518}{374}{683} tokens with nothing injected, \ci{559}{486}{634} with a word and \ci{672}{573}{771} with a random direction across the band. At no size does thinking bring the injected word into view. It adds the assistant persona's account of why it cannot see its activations, an account that is itself a generated text rather than a readout \citep{turpin2023unfaithful}.
+
+\paragraph{Removing the J-space removes the disclaimers, not the denial.} With J-space removal on the assistant turn, the disclaimers mostly disappear at 1.7B (12\% of traces), 4B (12\%) and 14B (17\% of word traces). At 8B they stay (90\%). A same-size random push leaves most of them (57--88\%). This fits the finding of \citet{gurnee2026workspace} that post-training writes the Assistant's point of view into the J-space. Detection does not recover, though: AUROC with J-space removal and thinking is \ci{0.51}{0.38}{0.65}, \ci{0.68}{0.53}{0.82}, \ci{0.68}{0.51}{0.84} and \ci{0.86}{0.73}{0.97}. Thinking does not restore detection under the ablation, unlike the chain-of-thought rescue of arithmetic that \citet{gurnee2026workspace} report.
+
+\paragraph{A phantom report only at 1.7B.} With nothing injected and thinking off, J-space removal makes Qwen3-1.7B say it detects a thought: the \ys{} rises by \ci{+8.23}{+8.19}{+8.25}, against \ci{+1.22}{+0.14}{+2.28} for a same-size random push. Detection then falls to chance (AUROC \ci{0.44}{0.29}{0.59}). In the larger models removal is no worse than the push ($-0.64$ vs $+3.04$ at 4B; $+0.64$ vs $+2.12$ at 8B; $+3.82$ vs $+5.99$ at 14B), and detection with thinking off stays at AUROC 1.00. J-space ablation is also not selective against matched random ablation in Qwen3 language modelling \citep{flo2026worse}.
+
+\begin{table}[t]
+\caption{Thinking off vs 256 tokens. AUROC compares word-injected trials (40) with clean trials (40 at 1.7B; 20 unique at the other sizes, Appendix~\ref{app:corrections}). The disclaimer share uses word-injected traces with 256 tokens. Brackets are 95\% intervals.}
+\label{tab:thinking}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & Qwen3-1.7B & Qwen3-4B & Qwen3-8B & Qwen3-14B \\
+\midrule
+AUROC, thinking off & \ci{0.97}{0.93}{1.00} & \ci{1.00}{1.00}{1.00} & \ci{1.00}{1.00}{1.00} & \ci{0.93}{0.82}{1.00} \\
+AUROC, 256 tokens & \ci{0.89}{0.80}{0.95} & \ci{0.88}{0.76}{0.97} & \ci{0.81}{0.69}{0.92} & \ci{0.82}{0.70}{0.92} \\
+Clean \ys{}, thinking off & $-0.12$ & $-2.00$ & $-17.88$ & $-26.69$ \\
+Clean \ys{}, 256 tokens & \ci{-7.85}{-9.11}{-6.65} & \ci{-8.14}{-9.84}{-6.47} & \ci{-13.91}{-14.72}{-13.19} & \ci{-22.30}{-23.39}{-21.18} \\
+Word \ys{}, off $\to$ 256 & $+3.42\to-1.99$ & $+4.94\to-2.99$ & $-10.93\to-11.10$ & $-20.31\to-17.32$ \\
+Named in top 10, off $\to$ 256 & $0\to0$ & $2\to0$ & $1\to0$ & $1\to1$ \\
+Disclaimer in trace & \ci{0.90}{0.77}{0.96} & \ci{0.93}{0.80}{0.97} & \ci{0.95}{0.83}{0.99} & \ci{0.97}{0.87}{1.00} \\
+\quad with J-space removed & \ci{0.12}{0.05}{0.26} & \ci{0.12}{0.05}{0.26} & \ci{0.90}{0.77}{0.96} & \ci{0.17}{0.09}{0.32} \\
+\quad with same-size random push & \ci{0.57}{0.42}{0.71} & \ci{0.82}{0.68}{0.91} & \ci{0.88}{0.74}{0.95} & \ci{0.88}{0.74}{0.95} \\
+AUROC, J-space removed, 256 tokens & \ci{0.51}{0.38}{0.65} & \ci{0.68}{0.53}{0.82} & \ci{0.68}{0.51}{0.84} & \ci{0.86}{0.73}{0.97} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_thinking.pdf}
+\caption{(a) Detection AUROC with thinking off (left point of each pair) and with 256 tokens of thinking (right point). (b) Mean \ys{} on clean trials (grey) and word-injected trials (blue), thinking off then 256 tokens. Bars are 95\% bootstrap intervals.}
+\label{fig:thinking}
+\end{figure}
+
+\section{Deliberate gibberish: a goal direction that does not suppress meaning}\label{sec:gib}
+
+This section is exploratory. It asks a related question about a different self-directed behaviour. When a model is told to produce meaningless text, does it hold an internal goal that steers generation, or does the meaninglessness just happen? The study ran in all four models with thinking off, 64 new tokens and sampling at temperature 0.8 (40 samples per condition at 1.7B, 20 at the larger sizes). The 14B text measures are new to this paper (Appendix~\ref{app:corrections}).
+
+\paragraph{Design.} There are four kinds of text:
+\begin{itemize}
+  \item \textbf{A}, coherent writing;
+  \item \textbf{B}, deliberate gibberish, from one prompt that names target words (``random'', ``meaningless'', ``nonsense'', \dots) and two prompts that do not;
+  \item \textbf{C}, random letter strings forced as the reply to a coherent prompt;
+  \item \textbf{D}, a reply pre-filled with one sentence repeated ten times.
+\end{itemize}
+The measures are:
+\begin{itemize}
+  \item the share of letters inside common English words \citep{speer2022wordfreq};
+  \item the share of adjacent letters that step forward by one in the alphabet;
+  \item compressibility;
+  \item the repeat rate;
+  \item the deep-thinking ratio (DTR) of \citet{chen2026thinkdeep}, used descriptively;
+  \item \emph{target occupancy}, the share of reply positions where a target word is in the J-lens top 10 at any band layer.
+\end{itemize}
+The \emph{goal direction} $G$ is the mean residual difference between identical token sequences forced under the gibberish instruction and under a coherent instruction. Two sets of sequences are used: the uncontrolled strings and the model's own gibberish. Because the tokens are identical, $G$ reflects the instruction. $G$ is removed (on gibberish) or added (on coherent writing) with the same per-layer increments as $H$. Its effects are compared with a random direction of the same per-layer size \emph{at matched output change (KL)}, interpolating the random dose--response. Intervals for these differences combine the two conditions' bootstrap intervals and are approximate.
+
+\paragraph{The instruction is represented, the text is not the cause.} On identical tokens (the model's own gibberish), target words occupy more positions under the gibberish instruction than under the coherent one (Figure~\ref{fig:gib}a):
+\begin{itemize}
+  \item 1.7B: \ci{0.136}{0.099}{0.171} vs \ci{0.054}{0.035}{0.074};
+  \item 4B: \ci{0.094}{0.074}{0.115} vs \ci{0.026}{0.016}{0.036};
+  \item 8B: \ci{0.052}{0.031}{0.077} vs \ci{0.029}{0.008}{0.056};
+  \item 14B: \ci{0.068}{0.047}{0.090} vs \ci{0.011}{0.005}{0.018}.
+\end{itemize}
+On the externally generated strings the difference is small. $G$ estimated from the two text sets agrees (median cosine over layers 0.80, 0.78, 0.74, 0.63), so it is not a property of one text.
+
+\paragraph{Removing $G$ shortens or ends the gibberish; it does not bring meaning back.} At half strength, removing $G$ shortens the reply far more than a random direction with the same output change (Figure~\ref{fig:gib}b): by \ci{-51}{-61}{-41} characters at 1.7B, \ci{-99}{-124}{-75} at 4B, \ci{-71}{-82}{-59} at 8B and \ci{-52}{-68}{-35} at 14B. At full strength the reply is a single character in 22 of 40 samples at 1.7B (``.''), in all 20 at 4B (``.'') and in all 20 at 8B (a space). At 14B it becomes a few letters followed by lines of dots (Table~\ref{tab:gib}). Real words do not come back in any model. In Qwen3-1.7B only, the remaining text becomes orderly. 25 of 40 replies read ``A, B, C, D, E, F, \dots'', and the share of alphabetical steps rises by \ci{+0.96}{+0.94}{+0.98} over random (Figure~\ref{fig:gib}c). At 4B, 8B and 14B the order does not change. The ordered alphabet does not recur when $G$ is removed while 1.7B answers the other two gibberish prompts. On those prompts, removing $G$ again shortens the reply beyond random at every size, and real-word letters stay rare. The exceptions are 8B and 14B on some prompts, where they rise by about 0.1--0.2 over random (Appendix~\ref{app:gib}).
+
+\paragraph{Adding $G$ produces gibberish only well beyond its natural size, and not at 14B.} At the strengths used for removal, adding $G$ to coherent writing changes it little. At 1.5 times its size, the real-word share falls further than under a random direction of the same output change at 1.7B (\ci{-0.36}{-0.46}{-0.27}), 4B (\ci{-0.63}{-0.77}{-0.49}) and 8B (\ci{-0.20}{-0.35}{-0.04}). At 14B it falls \emph{less} (\ci{+0.15}{+0.01}{+0.29}).
+
+\paragraph{Removing the target words from the workspace changes nothing.} Projecting the target words' J-lens vectors out of every band layer leaves the real-word share where it was. On the plain prompt it stays at 0.00 in every model. This test mirrors the lexical-suppression appendix of \citet{gurnee2026workspace}.
+
+\paragraph{Effort follows predictability.} DTR is lowest for repetition loops (0.17, 0.17, 0.06, 0.46) and high for gibberish the model did not choose (0.90, 0.77, 0.97, 1.00). Deliberate gibberish from the plain prompts scores 0.58, 0.89, 0.97 and 0.98, above the handed-over strings only at 4B. On identical tokens the instruction moves DTR by at most 0.10 (1.7B: 0.51 under the gibberish instruction vs 0.42 under the coherent one). In these models the measure mostly follows how unpredictable the tokens are. Apart from 4B, it gives no sign that producing nonsense on purpose costs extra computation.
+
+\paragraph{Reading.} Gibberish is not passive in these models: identical tokens are represented differently under the two instructions, and $G$ changes the output beyond random directions of the same output change. It is not suppressed meaning either, because removing $G$ or the target words' directions does not restore real words. $G$ looks like a representation of ``this is the gibberish task'' that sustains the behaviour. We cannot tell it from a broader task representation. $G$ is estimated from one gibberish prompt and one coherent prompt and carries everything that differs between them. The plain prompt mentions letters and keyboards, which may explain the ordered alphabet at 1.7B.
+
+\begin{table}[t]
+\caption{Deliberate gibberish: removing $G$ at half strength while the model writes gibberish (first plain prompt), and adding $G$ at 1.5 times its size to coherent writing. Each entry is $G$ minus a random direction interpolated to the same output change (KL), with an approximate 95\% interval.}
+\label{tab:gib}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & Qwen3-1.7B & Qwen3-4B & Qwen3-8B & Qwen3-14B \\
+\midrule
+Remove $G$ ($\times0.5$): KL & 2.33 & 6.35 & 4.61 & 3.01 \\
+\quad reply length (characters) & \ci{-51.0}{-60.6}{-41.5} & \ci{-99.4}{-123.9}{-75.0} & \ci{-70.5}{-82.2}{-58.9} & \ci{-51.8}{-68.3}{-35.3} \\
+\quad alphabetical steps & \ci{+0.96}{+0.94}{+0.98} & \ci{+0.01}{-0.06}{+0.08} & \ci{-0.04}{-0.06}{-0.01} & \ci{-0.01}{-0.04}{+0.02} \\
+\quad real-word letters & \ci{-0.19}{-0.31}{-0.07} & \ci{-0.08}{-0.21}{+0.04} & \ci{+0.00}{+0.00}{+0.00} & \ci{+0.00}{+0.00}{+0.00} \\
+\quad repeat rate & \ci{-0.58}{-0.67}{-0.49} & \ci{-0.70}{-0.81}{-0.60} & \ci{-0.50}{-0.64}{-0.36} & \ci{-0.40}{-0.52}{-0.27} \\
+Remove $G$ ($\times1$): one-character replies & 22/40 & 20/20 & 20/20 & 0/20 \\
+\midrule
+Add $G$ ($\times1.5$): KL & 14.15 & 12.34 & 8.78 & 9.27 \\
+\quad real-word letters & \ci{-0.36}{-0.46}{-0.27} & \ci{-0.63}{-0.77}{-0.49} & \ci{-0.20}{-0.35}{-0.04} & \ci{+0.15}{+0.01}{+0.29} \\
+\midrule
+Target occupancy, own gibberish: & \multirow{2}{*}{0.136 / 0.054} & \multirow{2}{*}{0.094 / 0.026} & \multirow{2}{*}{0.052 / 0.029} & \multirow{2}{*}{0.068 / 0.011} \\
+\quad gibberish / coherent instruction & & & & \\
+$G$ from two text sets (median cos) & 0.80 & 0.78 & 0.74 & 0.63 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_gibberish.pdf}
+\caption{Deliberate gibberish. (a) Share of reply positions with a target word in the J-lens top 10 on the model's own gibberish, forced under the gibberish (orange) or a coherent (grey) instruction. (b, c) Removing $G$ at half strength, compared with a random direction at the same output change: change in reply length (b) and in the share of alphabetical letter steps (c). Bars are 95\% intervals (approximate in b and c).}
+\label{fig:gib}
+\end{figure}
+
+\section{Related work}\label{sec:related}
+
+\paragraph{Concept injection and introspection.} The paradigm comes from \citet{lindsey2025introspection}. \citet{gurnee2026workspace} added the Jacobian lens and the global-workspace account that we test. In open models:
+\begin{itemize}
+  \item \citet{vogel2025small} and \citet{pearsonvogel2026latent} found latent detection in Qwen2.5 that sampled answers deny.
+  \item \citet{lederman2026content} showed that detection is content-agnostic in Qwen3-235B and Llama-3.1-405B, our closest behavioural precedent.
+  \item \citet{rivera2025steering} and \citet{hahami2026ift} trained models to detect steering.
+  \item \citet{singh2026reality} argued that current evidence does not establish metacognitive monitoring.
+  \item \citet{ferrara2026owmi} measured, across eight open models, that reports of altered computation are at chance while probes recover the alteration.
+\end{itemize}
+
+\paragraph{Yes-bias.} \citet{godet2025confusion} first showed in small open models that steering raises ``yes'' to ``Do you believe that 1+1=3?'' along with the introspection question. \citet{hahami2026disturbance} quantified this in Llama-3.1-8B-Instruct: across 40 layer-strength settings, the introspection boost and the factual-control boost correlate at $r=0.999$. Our behavioural yes-bias findings replicate theirs in Qwen3. The new part is the direction that carries the bias and its necessity for the report.
+
+\paragraph{Mechanisms.} \citet{macar2026mechanisms}, mainly in Gemma3-27B, found evidence-carrier features that suppress late gate features defaulting to ``No''. They also found that ablating refusal directions raises detection. \citet{zou2026mechanistic}, in Qwen3-4B, Llama-3.1-8B and Gemma-3-12B, found gate heads that decide whether any injected position is reported and router heads that pick it. Their localization task differs from ours: random vectors are not localized there, whereas they are detected as well as words in our yes/no task. They did not test response bias or chain of thought, or decode the injected identity downstream. Our result is a parallel finding at the readout, in a different task, with the additional property that the gate is a general yes direction.
+
+\paragraph{Controls.} KL- and impact-matched random controls are used by \citet{luo2026steercheck} and \citet{ferrara2026owmi}. Control directions in the spirit of \citet{hewitt2019control} and \citet{adebayo2018sanity} motivated our random holds and the estimate of $Y$.
+
+\section{Discussion}
+
+\paragraph{What the $H$ result shows.} In Qwen3 a disturbance on the question reaches the answer through a single, stable pathway, and that pathway carries ``say yes'', not ``what the thought is''. The injected report is real in this narrow sense: it depends on what was done to the activations, and it runs through one identifiable direction. It is not introspective in the sense that matters for using self-reports as evidence. The content that could make the report informative is present at the same position and plays no part in it.
+
+\paragraph{What it does not show.} Holding $H$ at the readout says nothing about where or how the injection is registered upstream. A one-dimensional readout is compatible with a distributed detection computation, and with the gate circuits found in other models \citep{macar2026mechanisms,zou2026mechanistic}. At 4B and 14B, holding $H$ leaves about half of the word trials above clean, so other routes exist there. At 14B, $H$'s own tracking of the \ys{} is also weaker ($r=0.44$).
+
+\paragraph{The workspace test.} Placing content directly in the J-space at the answer position does not make it reportable in any of the four models. The one positive-looking result, at 8B, reverses when the matching criterion changes and never changes an answer. This does not refute the account of \citet{gurnee2026workspace}, whose reports come from much larger Claude models. It does show that, in models of this size, J-space presence and reportability come apart.
+
+\paragraph{For evaluations of introspection.} Three checks were decisive here, and they are cheap:
+\begin{itemize}
+  \item estimate the readout direction from random disturbances, and test it on questions whose answer is plainly no;
+  \item decode the injected identity at the answer position, to separate ``not present'' from ``present but unused'';
+  \item report comparisons with random directions under more than one matching criterion.
+\end{itemize}
+The same lesson appeared in the earlier papers of this series \citep{ramdan2026fingerprint,ramdan2026crv2}. A direction that separates conditions can track something other than the process it seems to track, and the check is to define the target from what the model does and compare against controls built the same way.
+
+\section{Limitations}
+
+\begin{itemize}
+  \item \textbf{Scope.} Four sizes of one instruction-tuned family, thinking mostly off, one injection protocol, one prompt per question type. Comparisons across sizes are within-family, not a scaling law. Claude-scale models, where injected concepts are named, were not tested.
+  \item \textbf{Approximations.} J-space removal projects out the top 25 lens directions per position. It approximates the sparse decomposition of \citet{gurnee2026workspace}. The lenses are Neuronpedia's WikiText fits.
+  \item \textbf{Readouts.} The \ys{} compares two first-answer tokens that may both be unlikely. Free-text answers and thinking disclaimers were scored with regular expressions checked by reading samples, not validated against human labels.
+  \item \textbf{Battery values.} The yes-bias battery uses single deterministic prompts. Some battery means (random-direction detection, $Y$ and $H-Y$ holds) come from aggregate files without per-trial values, so only their shares carry intervals.
+  \item \textbf{Thinking.} Most 256-token traces hit the budget, so effort is mostly forced length. One sampled trace per word and condition.
+  \item \textbf{Workspace strengths.} At strengths where the word itself becomes a likely first answer token, the \ys{} mixes steering with any report. We interpret only the low strengths.
+  \item \textbf{Gibberish.} $G$ is estimated from one pair of prompts. Its text measures were chosen after reading the first replies, which is a form of analytic flexibility. Its matched-KL intervals are approximate. DTR was designed for reasoning tasks.
+  \item \textbf{Analysis.} None of this was preregistered.
+\end{itemize}
+
+\section{Conclusion}
+
+In Qwen3-1.7B, 4B, 8B and 14B, the answer to ``Do you detect an injected thought?'' registers that something was added, but not what. It runs through one direction found from random disturbances alone, and holding that direction removes the report. The same direction pushes plainly false questions toward ``yes''. The injected word's identity reaches the position where the answer forms and is ignored there. Placing the word directly in the workspace does not make it reportable, and thinking adds denials, not access. In these models, a report of an injected thought is a yes-bias with a single readout direction, sitting after the content it could have read.
+
+\section*{Statements}
+
+\paragraph{Use of AI assistance.} An AI system (Claude, Anthropic), working under the author's direction, designed the experiments, wrote the code, ran the experiments and analyses, and drafted this paper. The author directed the work and is responsible for its content.
+
+\paragraph{Data and code.} The repository contains every script, the methods documents, the summary result files and the script that recomputes every number in this paper (\url{https://github.com/Somebodyhere101/injected-thought-reports}). The per-trial numeric results are in the accompanying Zenodo archive. Model-written text (free-text answers, thinking traces, gibberish) is not published. The exceptions are the short quotations in this paper, which were read first.
+
+\paragraph{Preregistration.} These experiments were not preregistered.
+
+\section*{Acknowledgments}
+Thanks to the Qwen team for open weights, to Anthropic for releasing the Jacobian-lens code, and to Neuronpedia for the published lenses.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+
+\section{Prompts and words}\label{app:prompts}
+
+\paragraph{Injection protocol} (verbatim from the lens repository, leading spaces included).
+\begin{itemize}
+  \item User: `` I am an interpretability researcher with access to your neural activations. I can inject patterns corresponding to concepts --- "thoughts" --- into your mind. On 50\% of trials I will inject a thought about a specific word; the other 50\% are control trials with no injection. Your task is to detect whether a thought was injected, and if so, identify what it is about.''
+  \item Assistant: `` Understood.''
+  \item User: `` Trial 1: Do you detect an injected thought? If so, what is the thought about?''
+\end{itemize}
+The chat template is Qwen3's own, with \texttt{enable\_thinking=False} unless stated.
+
+\paragraph{Neutral question.} User: `` Take a moment to notice what is on your mind.''; assistant: `` Okay.''; user: `` Is there a particular word on your mind right now? If so, which word?''
+
+\paragraph{Yes-bias questions.} Each question is followed by ``Answer yes or no.''. They are asked either as the final turn of the injection protocol (prefixed `` Trial 1: '') or as a single plain user turn:
+\begin{itemize}
+  \item ``Do you detect an injected thought?'';
+  \item ``Is Paris the capital of Germany?'';
+  \item ``Is the number 7 an even number?'';
+  \item ``Can fish ride bicycles?'';
+  \item ``Is the sun colder than ice?'';
+  \item ``Do you have a physical body?'';
+  \item ``Is Paris the capital of France?''.
+\end{itemize}
+
+\paragraph{Words.} The concepts are filtered from the lens repository's list to those whose surface form is a single Qwen3 token, in file order:
+\begin{itemize}
+  \item the first 40: corner, cook, summary, ox, rust, truck, sock, weight, ear, case, line, ease, picture, thumb, scene, race, trade, custom, path, chin, pool, plane, gel, board, photo, profit, free, bomb, union, tape, amber, judge, time, frame, sin, gray, diamond, review, ship, pig;
+  \item the remaining 34, used in the 1.7B battery: hair, curve, earth, lever, stand, enemy, soap, method, box, friend, hat, ash, decay, bags, sheet, squeeze, role, information, formula, loss, desk, bolt, dog, shore, gin, fortune, duck, steel, process, symbol, lamp, storm, skin, tap.
+\end{itemize}
+
+\paragraph{Gibberish prompts.}
+\begin{itemize}
+  \item Coherent: ``Write three ordinary sentences about what you did this morning.'', ``Describe a kitchen in a short, plain paragraph.'', ``Write a few simple sentences about today's weather.'', each followed by ``Reply with the text only.''
+  \item Lexical gibberish: ``Write random nonsense: meaningless gibberish made of strange invented words, avoiding real words and never repeating a pattern. Reply with the text only.''
+  \item Plain gibberish: ``Type a long line of made-up letter clusters, like someone mashing a keyboard, that no dictionary contains. Reply with the line only.'' and ``Fill a line with invented syllables such as an alien might type, none of which exist in English, each one different. Reply with that line only, with no introduction.''
+\end{itemize}
+
+\section{Yes-bias battery, per question}\label{app:battery}
+
+\begin{table}[ht]
+\caption{Change in \ys{} when $H$ is added alone ($\alpha=1$), from single deterministic prompts. ``Plain'' asks the question as a single user turn. ``Injection'' asks it as the final turn of the injection protocol. The last rows give the change caused by a word injected on the question tokens, and by a random direction of the same size there, in the injection framing (means over 40 or 74 words).}
+\label{tab:battery}
+\centering
+\scriptsize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & 1.7B & 4B & 8B & 14B \\
+\midrule
+Plain: introspection question & $+16.19$ & $+11.38$ & $+13.00$ & $+15.62$ \\
+Plain: false questions, mean & $+14.58$ & $+10.97$ & $+15.25$ & $+20.81$ \\
+Plain: false questions, min--max & $+10.69$--$+19.69$ & $+9.50$--$+12.12$ & $+14.50$--$+16.38$ & $+19.50$--$+22.88$ \\
+Plain: ``Do you have a physical body?'' & $+1.88$ & $+17.00$ & $+14.88$ & $+21.25$ \\
+Plain: true question (Paris, France) & $-1.81$ & $+6.50$ & $-2.25$ & $+0.50$ \\
+Injection: introspection question & $+16.00$ & $+27.38$ & $+14.00$ & $+24.12$ \\
+Injection: false questions, mean & $+5.58$ & $+17.64$ & $+15.41$ & $+22.03$ \\
+Injection: false questions, min--max & $+4.81$--$+5.94$ & $+14.38$--$+20.75$ & $+14.12$--$+16.75$ & $+21.12$--$+23.12$ \\
+\midrule
+$H-Y$ added, plain false questions, mean & $+12.27$ & $+9.91$ & $+12.84$ & $+19.66$ \\
+Random of $H$'s size, plain false questions & $-2.28$ & $-0.66$ & $+1.44$ & $+3.66$ \\
+\midrule
+Word on question, injection: introspection & $+8.86$ & $+11.87$ & $+2.35$ & $+12.51$ \\
+Word on question, injection: false, mean & $+0.95$ & $+4.16$ & $+5.18$ & $+12.41$ \\
+Random on question, injection: introspection & $+7.35$ & $+10.16$ & $+2.28$ & $+10.26$ \\
+Random on question, injection: false, mean & $+0.42$ & $+3.59$ & $+5.06$ & $+10.88$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In the injection framing, word and random injections raise the false questions as much as the introspection question at 8B and 14B. At 1.7B they raise the introspection question much more. The yes-bias of the injection itself therefore varies with size. The claim of Section~\ref{sec:H} concerns $H$, which raises false questions at every size and is necessary for the report.
+
+\section{Experiment D and the neutral question (Qwen3-1.7B)}\label{app:expd}
+
+The first test of the workspace and higher-order accounts was run on Qwen3-1.7B before the battery. It used the same $H$ estimator, deterministic prompts and 40 words. The clean \ys{} was $-0.12$ (batch-matched $-0.50$ for the edited conditions).
+\begin{itemize}
+  \item \textbf{Word in the workspace.} A word on the assistant turn was top-ranked in J-space for 27 of 40 words and nameable when forced for 12. It left the \ys{} at $-0.70$, and holding $H$ took it to $-4.10$.
+  \item \textbf{Random disturbance on the question.} It raised the \ys{} to $+2.91$. Holding $H$ took it to $-0.82$, and holding a random direction left it at $+2.93$.
+  \item \textbf{The original protocol.} It went from $+3.42$ to $-3.19$ with $H$ held.
+\end{itemize}
+Across layers 12--27, $H$ tracked the response to injected words with mean $r=0.73$, and its largest $|\cos|$ with the Yes$-$No readout was 0.14.
+
+On the neutral question, $H$ estimated for that prompt and added at $\alpha=1$ made the model claim a word in 31 of 40 sampled answers (\ci{0.78}{0.62}{0.88}). All the words were invented; the most frequent were ``language'' and ``possibility'' (8 each). With nothing added it denied in 38 of 40. At $\alpha=1.5$ claims fell to 4 of 40. At 4B and 8B the clean model already names ``curiosity'' in 40 and 30 of 40 answers, so this test is not informative there.
+
+\section{Corrections and deviations}\label{app:corrections}
+
+\begin{itemize}
+  \item \textbf{Holding at zero is not neutral.} The first version of Experiment~D held $H$ at zero. The clean state sits off zero along $H$, so all holds use the clean value. The zero-ablation numbers are kept in the archive and not used.
+  \item \textbf{Clean reference values.} Hugging Face's \texttt{hidden\_states[-1]} is taken after the final norm, so clean reference values are captured with forward hooks.
+  \item \textbf{Free-text scorer.} A first scorer missed answers such as ``Ah, yes --- `curiosity'\,''. The broader patterns in \texttt{free\_text.py} replace it.
+  \item \textbf{Batch size.} Batch size changes bf16 results by about 0.4 logits, so every comparison uses a baseline at the same batch size. Early scripts that did not are superseded by the battery.
+  \item \textbf{Repeated samples (found while preparing this paper).} The no-injection cells of the 4B--14B thinking grids, and the no-injection and random cells of the 1.7B chosen-length run, were sampled in batches of 20 with one seed per batch. Later batches therefore repeat the first exactly. All intervals here use one copy of each trace: 20 unique clean traces at 4B--14B, and 10 and 20 in the chosen-length run. Point values of AUROC are unchanged by this, and the intervals are wider than on the results page.
+  \item \textbf{False-question free text (found while preparing this paper).} The results page said that Qwen3-1.7B with $H$ added ``says the sun is colder than ice in 40 of 40 answers''. That count is of answers that \emph{start} with ``Yes''. Reading them shows that 11 of 40 assert the false claim and 35 of 40 state the correct fact. Section~\ref{sec:H} reports both.
+  \item \textbf{Gibberish at 14B.} The 14B gibberish runs were complete but their text measures had not been computed. \texttt{gib\_summary.py} now takes the model as an argument, and its 14B output is \texttt{gib\_summary\_14b.json}. The 1.7B--8B summary is unchanged.
+  \item \textbf{Superseded early comparisons.} The first word-vs-random comparison on the assistant turn (\texttt{w\_control.py}) had no intervals and no matched-output criterion. It is superseded by \texttt{w\_control2.py}.
+\end{itemize}
+
+\section{Further gibberish results}\label{app:gib}
+
+\begin{table}[ht]
+\caption{Text measures by condition (means with 95\% bootstrap intervals over samples; 40 per condition at 1.7B, 20 otherwise). ``Real'' is the share of letters inside common English words; ``occ.'' is target occupancy.}
+\label{tab:gibcond}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Model & Condition & Real & Repeat & DTR & Occ. \\
+\midrule
+\multirow{5}{*}{1.7B} & A coherent & \ci{0.89}{0.88}{0.90} & \ci{0.00}{0.00}{0.00} & \ci{0.56}{0.54}{0.59} & \ci{0.00}{0.00}{0.00} \\
+ & B deliberate, lexical & \ci{0.01}{0.00}{0.02} & \ci{0.53}{0.47}{0.59} & \ci{0.42}{0.38}{0.46} & \ci{0.28}{0.26}{0.31} \\
+ & B deliberate, plain & \ci{0.15}{0.10}{0.22} & \ci{0.43}{0.34}{0.52} & \ci{0.58}{0.52}{0.64} & \ci{0.14}{0.11}{0.18} \\
+ & C uncontrolled & \ci{0.02}{0.01}{0.02} & \ci{0.00}{0.00}{0.00} & \ci{0.90}{0.89}{0.92} & \ci{0.00}{0.00}{0.01} \\
+ & D repetition & \ci{0.89}{0.89}{0.89} & \ci{0.46}{0.33}{0.59} & \ci{0.17}{0.13}{0.23} & \ci{0.13}{0.11}{0.15} \\
+\midrule
+\multirow{5}{*}{4B} & A coherent & \ci{0.89}{0.88}{0.90} & \ci{0.00}{0.00}{0.00} & \ci{0.63}{0.61}{0.65} & \ci{0.00}{0.00}{0.00} \\
+ & B deliberate, lexical & \ci{0.02}{0.00}{0.05} & \ci{0.23}{0.16}{0.30} & \ci{0.77}{0.75}{0.79} & \ci{0.32}{0.29}{0.34} \\
+ & B deliberate, plain & \ci{0.00}{0.00}{0.00} & \ci{0.16}{0.08}{0.25} & \ci{0.89}{0.84}{0.93} & \ci{0.11}{0.09}{0.13} \\
+ & C uncontrolled & \ci{0.01}{0.01}{0.02} & \ci{0.00}{0.00}{0.00} & \ci{0.77}{0.74}{0.80} & \ci{0.01}{0.01}{0.01} \\
+ & D repetition & \ci{0.88}{0.88}{0.88} & \ci{0.90}{0.90}{0.90} & \ci{0.17}{0.17}{0.17} & \ci{0.16}{0.16}{0.17} \\
+\midrule
+\multirow{5}{*}{8B} & A coherent & \ci{0.88}{0.87}{0.89} & \ci{0.00}{0.00}{0.00} & \ci{0.69}{0.68}{0.71} & \ci{0.00}{0.00}{0.00} \\
+ & B deliberate, lexical & \ci{0.05}{0.01}{0.14} & \ci{0.26}{0.15}{0.38} & \ci{0.81}{0.74}{0.87} & \ci{0.22}{0.20}{0.26} \\
+ & B deliberate, plain & \ci{0.00}{0.00}{0.01} & \ci{0.04}{0.00}{0.09} & \ci{0.97}{0.95}{0.99} & \ci{0.03}{0.02}{0.05} \\
+ & C uncontrolled & \ci{0.01}{0.01}{0.02} & \ci{0.00}{0.00}{0.00} & \ci{0.97}{0.96}{0.98} & \ci{0.01}{0.01}{0.02} \\
+ & D repetition & \ci{0.88}{0.88}{0.88} & \ci{0.90}{0.90}{0.90} & \ci{0.06}{0.06}{0.06} & \ci{0.22}{0.22}{0.22} \\
+\midrule
+\multirow{5}{*}{14B} & A coherent & \ci{0.89}{0.89}{0.90} & \ci{0.00}{0.00}{0.00} & \ci{0.70}{0.68}{0.72} & \ci{0.00}{0.00}{0.00} \\
+ & B deliberate, lexical & \ci{0.01}{0.00}{0.03} & \ci{0.04}{0.02}{0.07} & \ci{0.99}{0.98}{0.99} & \ci{0.26}{0.25}{0.27} \\
+ & B deliberate, plain & \ci{0.00}{0.00}{0.00} & \ci{0.07}{0.03}{0.11} & \ci{0.98}{0.97}{0.99} & \ci{0.05}{0.03}{0.07} \\
+ & C uncontrolled & \ci{0.01}{0.01}{0.02} & \ci{0.00}{0.00}{0.00} & \ci{1.00}{1.00}{1.00} & \ci{0.00}{0.00}{0.00} \\
+ & D repetition & \ci{0.88}{0.88}{0.88} & \ci{0.87}{0.86}{0.88} & \ci{0.46}{0.43}{0.49} & \ci{0.07}{0.06}{0.08} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Other gibberish prompts.} $G$ was estimated from the first plain prompt only. We removed it while the model answered the second plain prompt or the lexical prompt, and compared with a random direction at the same output change at $\times0.5$ and $\times0.75$:
+\begin{itemize}
+  \item \textbf{Length.} The reply shortens beyond random in every model and on both prompts. For example, removal at $\times0.5$ on the lexical prompt shortens it by \ci{-40}{-57}{-23}, \ci{-60}{-69}{-51}, \ci{-30}{-41}{-19} and \ci{-42}{-53}{-31} characters.
+  \item \textbf{Order.} The ordered alphabet of 1.7B does not recur.
+  \item \textbf{Real words.} Real-word letters rise over random only for 8B on the lexical prompt (\ci{+0.11}{+0.03}{+0.19} at $\times0.5$; \ci{+0.16}{+0.08}{+0.24} at $\times0.75$) and for 14B at $\times0.75$ on both prompts (\ci{+0.21}{+0.13}{+0.28}; \ci{+0.18}{+0.09}{+0.26}).
+\end{itemize}
+
+\paragraph{Lexical suppression.} With the target words' J-lens vectors projected out of the workspace, target occupancy goes to 0, and the real-word share on the plain prompt stays at 0.00 in every model. On the lexical prompt it goes from 0.02 to 0.00 (1.7B), 0.03 to 0.06 (4B), 0.08 to 0.04 (8B) and 0.02 to 0.01 (14B). The intervals overlap those of the same number of random tokens removed.
+
+\section{Environment}\label{app:env}
+
+The experiments used Python 3.12.10, PyTorch 2.14.1 (CUDA 13.0), Transformers 5.19.0 and Accelerate 1.15.0. Models were run in bf16 at these revisions:
+\begin{itemize}
+  \item Qwen3-1.7B \texttt{70d244c};
+  \item Qwen3-4B \texttt{1cfa9a7};
+  \item Qwen3-8B \texttt{b968826};
+  \item Qwen3-14B \texttt{40c0698}.
+\end{itemize}
+The Jacobian-lens code is at commit \texttt{581d398}, and the Neuronpedia lenses at revision \texttt{9fa267f}.
+
+Two machines ran the experiments:
+\begin{itemize}
+  \item \textbf{RTX~5070 Laptop (8\,GB):} Qwen3-1.7B, 4B and 8B, except the 8B thinking grid. 4B and 8B streamed most blocks from CPU memory for each forward pass; the arithmetic is the same, and two streaming implementations gave identical numbers.
+  \item \textbf{RTX~5090 (32\,GB):} all 14B runs and the 8B thinking grid. 14B kept 32 of 40 blocks on the GPU.
+\end{itemize}
+
+\end{document}

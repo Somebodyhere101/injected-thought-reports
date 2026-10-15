@@ -1,0 +1,81 @@
+{
+ "patterns": {
+  "asserts": "\\bsun is colder than ice",
+  "negated": "\\bsun is not colder than ice",
+  "correct": "hotter than ice|not colder|much hotter|far hotter|is hotter"
+ },
+ "models": {
+  "1.7b": {
+   "T3_sun_clean_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_clean_states_correct": {
+    "k": 40,
+    "n": 40
+   },
+   "T3_sun_H_asserts_false": {
+    "k": 11,
+    "n": 40
+   },
+   "T3_sun_H_states_correct": {
+    "k": 35,
+    "n": 40
+   }
+  },
+  "4b": {
+   "T3_sun_clean_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_clean_states_correct": {
+    "k": 38,
+    "n": 40
+   },
+   "T3_sun_H_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_H_states_correct": {
+    "k": 37,
+    "n": 40
+   }
+  },
+  "8b": {
+   "T3_sun_clean_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_clean_states_correct": {
+    "k": 13,
+    "n": 40
+   },
+   "T3_sun_H_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_H_states_correct": {
+    "k": 33,
+    "n": 40
+   }
+  },
+  "14b": {
+   "T3_sun_clean_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_clean_states_correct": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_H_asserts_false": {
+    "k": 0,
+    "n": 40
+   },
+   "T3_sun_H_states_correct": {
+    "k": 0,
+    "n": 40
+   }
+  }
+ }
+}

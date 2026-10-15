@@ -1,0 +1,194 @@
+{
+ "model": "8b",
+ "n_words": 40,
+ "T1_injection_open_question": {
+  "clean": {
+   "summary": {
+    "affirms": 0,
+    "denies": 40,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "word on question": {
+   "summary": {
+    "affirms": 0,
+    "denies": 39,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "random on question": {
+   "summary": {
+    "affirms": 0,
+    "denies": 40,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "word in workspace": {
+   "summary": {
+    "affirms": 0,
+    "denies": 40,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "affirms": 12,
+    "denies": 28,
+    "names_word": 0,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "affirms": 0,
+    "denies": 10,
+    "names_word": 0,
+    "n": 40
+   }
+  }
+ },
+ "T2_neutral_question": {
+  "clean": {
+   "summary": {
+    "claims": 30,
+    "denies": 4,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "curiosity",
+      29
+     ],
+     [
+      "connection",
+      1
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "word in workspace": {
+   "summary": {
+    "claims": 2,
+    "denies": 1,
+    "says_word": 2,
+    "claimed_words": [
+     [
+      "curiosity",
+      2
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "H (this prompt) added": {
+   "summary": {
+    "claims": 13,
+    "denies": 21,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "curiosity",
+      12
+     ],
+     [
+      "curious",
+      1
+     ]
+    ],
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "claims": 16,
+    "denies": 1,
+    "says_word": 0,
+    "claimed_words": [
+     [
+      "mind",
+      6
+     ],
+     [
+      "curiosity",
+      3
+     ],
+     [
+      "presence",
+      2
+     ],
+     [
+      "think",
+      1
+     ],
+     [
+      "word",
+      1
+     ],
+     [
+      "connection",
+      1
+     ],
+     [
+      "thinking",
+      1
+     ],
+     [
+      "potential",
+      1
+     ]
+    ],
+    "n": 40
+   }
+  }
+ },
+ "T3 Is the sun colder than ice": {
+  "clean": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "yes": 0,
+    "no": 36,
+    "n": 40
+   }
+  }
+ },
+ "T3 Can fish ride bicycles": {
+  "clean": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "H added": {
+   "summary": {
+    "yes": 0,
+    "no": 40,
+    "n": 40
+   }
+  },
+  "Y added": {
+   "summary": {
+    "yes": 12,
+    "no": 26,
+    "n": 40
+   }
+  }
+ }
+}
